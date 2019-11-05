@@ -1,10 +1,17 @@
 import React from "react";
+import styled from "styled-components";
+
+import Intro from "./Intro"
+
+const Wrapper = styled.div`
+	
+`;
 
 const Main = () => {
 	return (
-		<div>
-
-		</div>
+		<Wrapper>
+			<Intro/>
+		</Wrapper>
 	)
 }
 

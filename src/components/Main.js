@@ -1,16 +1,29 @@
-import React from "react";
+import React, { useCallback, useState } from "react"
 import styled from "styled-components";
 
 import Intro from "./Intro"
+import Spinner from "./Spinner"
+import ServiceList from "./ServiceList"
 
 const Wrapper = styled.div`
 	
 `;
 
-const Main = () => {
+const Main = ({ setType }) => {
+	const [loading, setLoading] = useState(false);
+	const setTypeWithLoading = useCallback((type) => {
+		setLoading(true);
+		setTimeout (() => {
+			setType(type)
+			setLoading(false);
+		}, 2000);
+	}, []);
+
 	return (
 		<Wrapper>
-			<Intro/>
+			<Intro key={0} />
+			{loading && <Spinner/>}
+			<ServiceList setType={setTypeWithLoading} loading={loading}/>
 		</Wrapper>
 	)
 }

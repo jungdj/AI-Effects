@@ -19,6 +19,12 @@ const Wrapper = styled.div`
 		@return $val;
 	}
 
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 1000;
+	width: 100vw;
+	height: 100vh;
 	background: radial-gradient(#fff, #aaa);
 	background-size: 100vw 100vh; 
 	min-height: 100vh;
@@ -31,9 +37,21 @@ const Wrapper = styled.div`
 		70% {
 			opacity: 1;
 		}
+		
+		99% {
+			opacity: 0;
+			z-index: 1000;
+			min-height: 100vh;
+			max-height: 100vh;
+			padding-top: 40vh;
+		}
 		100% {
+			min-height: 0;
+			max-height: 0;
+			padding: 0;
 			opacity: 0;
 			z-index: -1;
+			display: none;
 		}
 	}
 	

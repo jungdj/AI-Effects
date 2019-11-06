@@ -3,6 +3,11 @@
   src: url('./static/fonts/BebasNeue-Regular.ttf');
 }
 
+@font-face {
+  font-family: 'Netflix Sans';
+  src: url('https://assets.nflxext.com/ffe/siteui/fonts/netflix-sans/v3/NetflixSans_W_Rg.woff2');
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
@@ -16,3 +21,9 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+a {
+  text-decoration: none;
+}
+
+a:focus, button:focus {outline:0;}

@@ -36,7 +36,7 @@ const Wrapper = styled.div`
 `
 
 function App() {
-  const [type, setType] = useState("")
+  const [type, setType] = useState("pose")
 	const [shrinked, setShrinked] = useState(false);
 	useEffect(() => {
 		var shrinkHeader = 100;
@@ -55,7 +55,7 @@ function App() {
 	}, [])
 
 	let Content = Main
-	if (type === 'post') Content = Pose;
+	if (type === 'pose') Content = Pose;
 	if (type === 'voice') Content = TongueSlip
 
   return (

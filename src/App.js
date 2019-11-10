@@ -63,7 +63,7 @@ function App() {
 			<header className={shrinked ? 'shrink' : ''}>
 				<img src={logo} onClick={() => setType()} style={{ cursor: 'pointer' }}/>
 			</header>
-      <Content setType={setType}/>
+      <Content setType={setType} />
     </Wrapper>
   )
 }

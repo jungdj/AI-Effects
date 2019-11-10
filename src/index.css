@@ -27,3 +27,7 @@ a {
 }
 
 a:focus, button:focus {outline:0;}
+
+* {
+  box-sizing: border-box;
+}

@@ -3,12 +3,13 @@ import styled from 'styled-components';
 
 const Wrapper = styled.div`
 	width: 100%;
-	height: auto;
-	max-height: 100vh;
-	min-height: 100vh;
+	height: 100vh;
+	overflow: scroll;
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
+	padding-top: 70px;
+	
+	scroll-snap-type: y mandatory;
 `
 
 const PageTemplate = ({ children }) => {

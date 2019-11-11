@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import styled from "styled-components";
+import netflix_intro from "../static/netflix_intro.mp3"
 
 const makeLongShadow = (length, angle) => {
 	let string = '';
@@ -108,9 +109,14 @@ const Wrapper = styled.div`
 `
 
 const Intro = () => {
+	useEffect(() => {
+		const audio = new Audio(netflix_intro);
+		audio.play();
+	}, [])
 	return (
 		<Wrapper>
 			<div className="txt" contentEditable="true">Project 7</div>
+			<audio />
 		</Wrapper>
 	)
 }

@@ -109,10 +109,17 @@ const Wrapper = styled.div`
 `
 
 const Intro = () => {
+
 	useEffect(() => {
 		const audio = new Audio(netflix_intro);
-		audio.play();
+		try {
+			audio.play();
+		} catch (error) {
+			console.error("auto play failed");
+			audio.play();
+		}
 	}, [])
+
 	return (
 		<Wrapper>
 			<div className="txt" contentEditable="true">Project 7</div>

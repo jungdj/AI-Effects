@@ -1,13 +1,19 @@
 import React, { useState, useCallback, useEffect } from "react"
 import useSetState from "../hooks/useSetState"
 import axios from 'axios';
+import daredevil from "../static/daredevil.mp3";
+import houseofcards from '../static/houseofcards.mp3';
+import strangerthings from '../static/strangerthings.mp3';
 
 import PageTemplate from "./PageTemplate"
 import VideoRecord from "./VideoRecord"
 import PoseProgress from "./PoseProgress"
 
+const audios = [daredevil, houseofcards, strangerthings]
+
 const Pose = () => {
 	let formData = null;
+	let audio;
 
 	const [done1, setDone1] = useState (false);
 	const [done2, setDone2] = useState (false);
@@ -15,6 +21,11 @@ const Pose = () => {
 
 	useEffect(() => {
 		formData = new FormData ();
+		audio = new Audio (audios[Math.floor(Math.random() * 3)]);
+
+		return () => {
+			audio.pause();
+		}
 	}, [])
 
 	const appendVideo = useCallback ((id, blob) => {
@@ -28,6 +39,7 @@ const Pose = () => {
 	}, [])
 
 	const upload = useCallback(() => {
+		audio.play ();
 		//if (!done1 || !done2) return alert ('Record videos first');
 		//axios.post ('localhost:3000', formData, {
 		//	onUploadProgress: (progressEvent => {

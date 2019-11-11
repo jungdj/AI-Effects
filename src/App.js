@@ -5,6 +5,8 @@ import Main from "./components/Main"
 import TongueSlip from "./components/TongueSlip"
 import Pose from "./components/Pose"
 
+import "animate.css"
+
 import logo from "./static/logo.png";
 
 const Wrapper = styled.div`

@@ -7,13 +7,12 @@ const Wrapper = styled.div`
 	overflow: scroll;
 	display: flex;
 	flex-direction: column;
-	
 	scroll-snap-type: y mandatory;
 `
 
 const PageTemplate = ({ children }) => {
 	return (
-		<Wrapper>
+		<Wrapper className="animated fadeIn">
 			{children}
 		</Wrapper>
 	)

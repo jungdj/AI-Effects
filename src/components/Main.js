@@ -16,7 +16,7 @@ const Main = ({ setType }) => {
 		setTimeout (() => {
 			setType(type)
 			setLoading(false);
-		}, 2000);
+		}, 1500);
 	}, []);
 
 	return (

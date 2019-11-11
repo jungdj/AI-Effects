@@ -28,13 +28,13 @@ const Pose = () => {
 	}, [])
 
 	const upload = useCallback(() => {
-		if (!done1 || !done2) return alert ('Record videos first');
-		axios.post ('localhost:3000', formData, {
-			onUploadProgress: (progressEvent => {
-				const percentCompleted = Math.round(progressEvent.loaded  / progressEvent.total * 10000)/ 100
-				console.log(percentCompleted);
-			})
-		});
+		//if (!done1 || !done2) return alert ('Record videos first');
+		//axios.post ('localhost:3000', formData, {
+		//	onUploadProgress: (progressEvent => {
+		//		const percentCompleted = Math.round(progressEvent.loaded  / progressEvent.total * 10000)/ 100
+		//		console.log(percentCompleted);
+		//	})
+		//});
 	}, [done1, done2, src1, src2])
 
 	return (

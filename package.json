@@ -9,6 +9,7 @@
     "react-dom": "^16.11.0",
     "react-scripts": "3.2.0",
     "styled-components": "^4.4.1",
+    "video-react": "^0.14.1",
     "videojs-record": "^3.8.0"
   },
   "scripts": {

@@ -36,7 +36,7 @@ const Wrapper = styled.div`
 `
 
 function App() {
-  const [type, setType] = useState("pose")
+  const [type, setType] = useState("main")
 	const [shrinked, setShrinked] = useState(false);
 	useEffect(() => {
 		var shrinkHeader = 100;

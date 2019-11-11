@@ -7,7 +7,6 @@ const Wrapper = styled.div`
 	overflow: scroll;
 	display: flex;
 	flex-direction: column;
-	padding-top: 70px;
 	
 	scroll-snap-type: y mandatory;
 `

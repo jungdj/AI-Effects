@@ -70,6 +70,11 @@ const Wrapper = styled.div`
 	
 	@keyframes netflix_style {
 		0% {
+			color:#e90418;
+			text-shadow: none;
+		}
+		
+		5% {
 			text-shadow: ${makeLongShadow(60, 1)};
 			color:#f3f3f3;
 			transform: scale(1.5, 1.5);

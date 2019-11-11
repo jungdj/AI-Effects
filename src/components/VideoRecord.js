@@ -38,8 +38,8 @@ const videoJsOptions = {
 const Wrapper = styled.div`
 	position: relative;
 	width: 100vw;
-	min-height: calc(100vh - 70px);
-	height: calc(100vh - 70px);
+	min-height: 100vh;
+	height: 100vh;
 	scroll-snap-align: start;
 `
 

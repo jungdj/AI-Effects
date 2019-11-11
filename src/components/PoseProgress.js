@@ -6,6 +6,7 @@ const Wrapper = styled.div`
 	scroll-snap-align: start;
 	width: 100vw;
 	padding: 70px 0 200px 0;
+	min-height: 100vh;
 	${props => props.hasBoth ? css`
 	` : css`
 		//min-height: calc(100vh - 70px);

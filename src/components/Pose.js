@@ -15,8 +15,7 @@ const Pose = () => {
 	let formData = null;
 	let audio;
 
-	const [done1, setDone1] = useState (false);
-	const [done2, setDone2] = useState (false);
+	const [{ done1, done2 }, setDone] = useState ({ done1: false, done2: false })
 	const [{ src1, src2 }, setState] = useSetState({ src1: '', src2: '' });
 
 	useEffect(() => {
@@ -28,10 +27,11 @@ const Pose = () => {
 		}
 	}, [])
 
-	const appendVideo = useCallback ((id, blob) => {
+	const processVideo = useCallback ((id, blob) => {
 		let num = 1;
 		if (id === 'second') num = 2;
 		const key = `video${num}`
+		setDone ({ [`done${num}`]: true })
 
 		formData.delete (key);
 		formData.append (key, blob)
@@ -51,8 +51,8 @@ const Pose = () => {
 
 	return (
 		<PageTemplate>
-			<VideoRecord id={'first'} appendVideo={appendVideo} done={setDone1} />
-			<VideoRecord id='second' appendVideo={appendVideo} done={setDone2} />
+			<VideoRecord id={'first'} processVideo={processVideo}/>
+			<VideoRecord id='second' processVideo={processVideo} />
 
 			<PoseProgress srcs={[src1, src2]} upload={upload} />
 		</PageTemplate>

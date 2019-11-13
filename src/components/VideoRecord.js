@@ -81,9 +81,10 @@ const VideoWrapper = styled.video`
 
 const Instructions = {
 	first: <>Record Your<br/> First Video</>,
-	second: <>Record Your<br/> Second Video</>
+	second: <>Record Your<br/> Second Video</>,
+	faceBlur1: <>Record Your<br/> Face blur video</>,
 }
-const VideoRecord = ({ id, appendVideo, done }) => {
+const VideoRecord = ({ id, processVideo }) => {
 	let player;
 	let videoNode = useRef (null);
 
@@ -116,13 +117,11 @@ const VideoRecord = ({ id, appendVideo, done }) => {
 				// can be downloaded by the user, stored on server etc.
 				console.log('finished recording: ', player.recordedData);
 
-				done (true);
-				appendVideo (id, player.recordedData);
-
+				processVideo (id, player.recordedData);
 				// Create an instance of FormData and append the video parameter that
 				// will be interpreted in the server as a file
-				let formData = new FormData();
-				formData.append('video', player.recordedData.video);
+				// let formData = new FormData();
+				// formData.append('video', player.recordedData.video);
 			});
 
 			// error handling
@@ -176,6 +175,10 @@ const VideoRecord = ({ id, appendVideo, done }) => {
 
 VideoRecord.propTypes = {
 	id: PropTypes.string.isRequired,
+}
+
+VideoRecord.defaultProps = {
+	processVideo: (x) => x,
 }
 
 export default VideoRecord;

@@ -4,6 +4,7 @@ import styled from "styled-components";
 import Main from "./components/Main"
 import TongueSlip from "./components/TongueSlip"
 import Pose from "./components/Pose"
+import FaceBlur from "./components/FaceBlur"
 
 import "animate.css"
 
@@ -58,7 +59,8 @@ function App() {
 
 	let Content = Main
 	if (type === 'pose') Content = Pose;
-	if (type === 'voice') Content = TongueSlip
+	if (type === 'voice') Content = TongueSlip;
+	if (type === 'face') Content = FaceBlur;
 
   return (
     <Wrapper>

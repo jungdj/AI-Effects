@@ -165,6 +165,16 @@ const ServiceList = ({ setType, loading}) => {
 							</a>
 						</div>
 					</li>
+					<li className="profile">
+						<div>
+							<a className="profile-link" tabIndex="0" href="#" onClick={() => setType('face')}>
+								<div className="avatar-wrapper">
+									<div className="profile-icon"/>
+								</div>
+								<span className="profile-name">Face Blur</span>
+							</a>
+						</div>
+					</li>
 					{/*<li>*/}
 					{/*	<a role="link" tabIndex="0" href="https://github.com/jungdj">*/}
 					{/*		<div className="addProfileIcon icon-tvuiAdd"></div>*/}

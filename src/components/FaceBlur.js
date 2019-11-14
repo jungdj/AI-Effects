@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 
 import VideoRecord from './VideoRecord';
-import PoseProgress from './PoseProgress'
+import PoseProgress from './PoseProgress';
 
-import PageTemplate from "./PageTemplate"
+import PageTemplate from './PageTemplate';
 
 const Wrapper = styled.div`
 // CSS 여기에 Sass 쓰면됨
@@ -27,7 +27,7 @@ const FaceBlur = () => {
 	return (
 		<PageTemplate>
 			<Wrapper>
-				<VideoRecord id="faceBlur1" processVideo={processVideo}/>
+				<VideoRecord id="faceBlur1" processVideo={processVideo} />
 				<PoseProgress srcs={[src, src]} />
 			</Wrapper>
 		</PageTemplate>

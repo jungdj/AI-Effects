@@ -1,0 +1,67 @@
+{
+  "name": "express-mongo-boilerplate",
+  "version": "0.0.0",
+  "description": "This repository is powered by jungdj",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "env:dev": "cross-env NODE_ENV=development",
+    "env:prod": "cross-env NODE_ENV=production",
+    "start": "node index",
+    "dev": "yarn env:dev nodemon index --watch src",
+    "prod": "yarn env:prod nodemon index",
+    "precommit": "lint-staged"
+  },
+  "lint-staged": {
+    "src/**/*.{js,jsx,json,css}": [
+      "prettier --config .prettierrc --write",
+      "git add"
+    ]
+  },
+  "dependencies": {
+    "@babel/core": "^7.4.3",
+    "@babel/preset-env": "^7.4.3",
+    "@babel/register": "^7.4.0",
+    "aws-sdk": "^2.485.0",
+    "axios": ">=0.18.1",
+    "chalk": "^2.4.2",
+    "cookie-parser": "~1.4.3",
+    "cross-env": "^5.2.0",
+    "debug": "~2.6.9",
+    "dotenv": "^7.0.0",
+    "dotenv-expand": "^5.1.0",
+    "dotenv-safe": "^6.1.0",
+    "express": "~4.16.0",
+    "express-graphql": "^0.8.0",
+    "express-session": "^1.16.1",
+    "graphql": "^14.2.1",
+    "helmet": "^3.16.0",
+    "http-errors": "~1.6.2",
+    "jsonwebtoken": "^8.5.1",
+    "lodash": "^4.17.11",
+    "mongoose": "^5.5.5",
+    "morgan": "~1.9.0",
+    "multer": "^1.4.1",
+    "multer-s3": "^2.9.0",
+    "s3-image-size": "^0.1.3",
+    "uuid": "^3.3.2",
+    "winston": "^3.2.1",
+    "winston-daily-rotate-file": "^3.8.0"
+  },
+  "babel": {
+    "presets": [
+      [
+        "@babel/preset-env",
+        {
+          "targets": {
+            "node": "current"
+          }
+        }
+      ]
+    ]
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.11",
+    "prettier": "^1.17.0"
+  }
+}

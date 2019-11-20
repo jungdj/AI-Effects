@@ -1,6 +1,6 @@
 /* 여기 ml 관련된거 짜시구요 */
 
-async function speechToText() {
+async function speechToText(fileName) {
   // Imports the Google Cloud client library
   // const speech = require('@google-cloud/speech');
   const speech = require('@google-cloud/speech').v1p1beta1;
@@ -9,10 +9,6 @@ async function speechToText() {
   // Creates a client
   const client = new speech.SpeechClient();
 
-  // The name of the audio file to transcribe
-  const fileName = '../static/speech_resources/audio.raw';
-
-  // Reads a local audio file and converts it to base64
   const file = fs.readFileSync(fileName);
   const audioBytes = file.toString('base64');
 
@@ -27,7 +23,7 @@ async function speechToText() {
     enableWordTimeOffsets: true,
     enableSpeakerDiarization: true,
     diarizationSpeakerCount: 4, // need to specify the number of speaker... (default: 2)
-    // model: 'video', // option for video.. let just use default now..
+    model: 'video', // option for video.. let just use default now..
   };
   const request = {
     audio: audio,
@@ -71,4 +67,5 @@ async function speechToText() {
   });
 
 }
-speechToText().catch(console.error);
+// speechToText().catch(console.error);
+module.exports = speechToText

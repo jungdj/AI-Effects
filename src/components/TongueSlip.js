@@ -63,11 +63,13 @@ const TongueSlip = () => {
     
     extractAudio().then(audioBuffer => {
       const blob = new Blob([audioBuffer], {type: 'audio/wav'});
-      const audioBlob = window.URL.createObjectURL(blob);
+      let formData = new FormData();
+      formData.append('audio', blob)
+      console.log("audioblob: ", formData.get('audio'));
 
-      axios.post('http://localhost:6001/asdf', {data: audioBlob})
-      .then(res => console.log(res))
-      .catch(err => console.log(err));
+      axios.post('http://localhost:6001/asdf', formData)
+        .then(res => console.log(res))
+        .catch(err => console.log(err));
     });
     // setUpload(false);
   }, [uploading, src])

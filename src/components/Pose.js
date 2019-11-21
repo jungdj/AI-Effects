@@ -51,7 +51,7 @@ const Pose = () => {
 
 	return (
 		<PageTemplate>
-			<VideoRecord id={'first'} processVideo={processVideo}/>
+			<VideoRecord id='first' processVideo={processVideo}/>
 			<VideoRecord id='second' processVideo={processVideo} />
 
 			<PoseProgress srcs={[src1, src2]} upload={upload} />

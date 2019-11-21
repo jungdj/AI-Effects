@@ -56,13 +56,8 @@ const FaceBlur = () => {
 	return (
 		<PageTemplate>
 			<Wrapper>
-<<<<<<< HEAD
 				<video id="abc" width="320" height="179" autoPlay controls src={ sampleVideo } ref={inputVideo} onPlay={onPlay}/>
 				<canvas ref={canvas}/>
-=======
-				<VideoRecord id="faceBlur1" processVideo={processVideo} />
-				<PoseProgress srcs={[src, src]} />
->>>>>>> speechToText
 			</Wrapper>
 		</PageTemplate>
 	)

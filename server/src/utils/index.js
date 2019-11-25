@@ -1,4 +1,5 @@
 import mongoose from "mongoose"
+import multer from 'multer';
 
 export const parseJSON = (json) => {
 	try {
@@ -11,3 +12,18 @@ export const parseJSON = (json) => {
 }
 
 export const isValidId = mongoose.Types.ObjectId.isValid
+
+export const getTimestamp = () => (new Date().getTime()) / 1000;
+export const getFileName = (name, extension) => `${name}-${getTimestamp()}${extension ? `.${extension}` : ''}`
+export const getFilePath = (name, extension) => `static/${getFileName(name, extension)}`
+
+const storage = multer.diskStorage({
+	destination: (req, file, cb) => {
+		cb(null, 'static');
+	},
+	filename: (req, file, cb) => {
+		cb(null, getFileName (req.url.split('/')[1] + file.fieldName))
+	}
+})
+
+export const upload = multer ({ storage })

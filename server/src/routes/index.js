@@ -1,9 +1,7 @@
 import express from "express"
-import userRoutes from "./user"
+import videoRoutes from './video';
 import {speechToText, findWords} from '../utils/ml.utils'
-
-var multer  = require('multer')
-var upload = multer({ dest: 'uploads/' })
+import { upload } from "../utils"
 
 const router = express.Router()
 
@@ -16,9 +14,9 @@ router.get("/hc", (req, res) => {
 	res.sendStatus(200);
 })
 
-router.use("/user", userRoutes)
+router.use("/video", videoRoutes)
 
-router.post('/asdf', upload.single('audio'), (req, res) => {
+router.post('/audio', upload.single('audio'), (req, res) => {
   const fileName = req.file.path;
 
   speechToText(fileName).then((wordsList) => {

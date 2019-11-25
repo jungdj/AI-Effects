@@ -10,6 +10,7 @@ async function speechToText(fileName, duration) {
   const client = new speech.SpeechClient();
 
   const file = fs.readFileSync(fileName);
+  // TODO: need to store in gcs bucket for long video file!
   const audioBytes = file.toString('base64');
 
   // The audio file's encoding, sample rate in hertz, and BCP-47 language code
@@ -33,17 +34,19 @@ async function speechToText(fileName, duration) {
   // Detects speech in the audio file
   // duration >= 1 minutes=60 : use async longrunning operation ; else use sync operation
   // TODO: timeout limitations?
-  let response;
+  let response2;
   if (duration < 60) {
-    [response] = await client.recognize(request);
-    console.log("Shor video; Waiting for operation to complete...")
+    response2 = await client.recognize(request);
+    console.log("Short video; Waiting for operation to complete...")
   }
   else {
     // long audio file with async
     const [operation] = await client.longRunningRecognize(request);
     console.log("Waiting for operation to complete...")
-    [response] = await operation.promise();
+    response2 = await operation.promise();
   }
+
+  const [response] = await response2;
 
   response.results.forEach(result => {
     let alternative = result.alternatives[0]

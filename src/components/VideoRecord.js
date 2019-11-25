@@ -29,7 +29,7 @@ const videoJsOptions = {
 		record: {
 			audio: true,
 			video: true,
-			maxLength: 60,
+			maxLength: 120,
 			debug: true
 		}
 	}

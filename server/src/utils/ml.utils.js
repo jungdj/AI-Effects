@@ -1,10 +1,10 @@
 /* 여기 ml 관련된거 짜시구요 */
+import fs from 'fs';
 
-async function speechToText(fileName) {
+async function speechToText(fileName, duration) {
   // Imports the Google Cloud client library
   // const speech = require('@google-cloud/speech');
   const speech = require('@google-cloud/speech').v1p1beta1;
-  const fs = require('fs');
 
   // Creates a client
   const client = new speech.SpeechClient();
@@ -31,12 +31,19 @@ async function speechToText(fileName) {
   };
 
   // Detects speech in the audio file
-  // long audio file with async
-  const [operation] = await client.longRunningRecognize(request);
-  console.log("Waiting for operation to complete...")
-  const [response] = await operation.promise();
-
-  // TODO : timeout limitations?
+  // duration >= 1 minutes=60 : use async longrunning operation ; else use sync operation
+  // TODO: timeout limitations?
+  let response;
+  if (duration < 60) {
+    [response] = await client.recognize(request);
+    console.log("Shor video; Waiting for operation to complete...")
+  }
+  else {
+    // long audio file with async
+    const [operation] = await client.longRunningRecognize(request);
+    console.log("Waiting for operation to complete...")
+    [response] = await operation.promise();
+  }
 
   response.results.forEach(result => {
     let alternative = result.alternatives[0]

@@ -19,21 +19,21 @@ router.get("/hc", (req, res) => {
 
 router.use("/user", userRoutes)
 
-router.post('/asdf', upload.single('audio'), (req, res) => {
+router.post('/audio', upload.single('audio'), (req, res) => {
   const fileName = req.file.path;
+  const duration = req.body.duration;
 
-  speechToText(fileName).then((wordsList) => {
+  speechToText(fileName, duration).then((wordsList) => {
     if (!wordsList) {
       console.log("No one spoke in video!");
-      console.log("nothing to cut");
-      res.send('nothing to change');
+      res.status(200).send('nothing to cut');
     }
     else {
       const cuttingList = findWords(wordsList);
       console.log("cuttingList: ", cuttingList);
-      // TODO: cut video with given 'cuttingList'
+      // TODO: cut video with given 'cuttingList' -> cuttingList가 empty list가 아닐때 잘라주기(length 이용)
       // TODO: different captions for each speaker with given 'wordsList[i].speakerTag'
-      res.send('succeed!');
+      res.status(200).send('success');
     }
     // temporary host ip... TODO: need to change python-server host
     request.get('http://127.0.0.1:5000/temp')

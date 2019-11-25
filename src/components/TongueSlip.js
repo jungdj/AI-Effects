@@ -54,21 +54,39 @@ const TongueSlip = () => {
       soundSource.start();
 
       return offlineAudioContext.startRendering();
-    }).then( renderedBuffer => toWav(renderedBuffer))
+      // return [offlineAudioContext.startRendering(), duration];
+    }).then( renderedBuffer => {
+      return [toWav(renderedBuffer), renderedBuffer.duration]
+    })
     .catch(err => console.log('Rendering failed: ', err));
   }
 
   const upload = useCallback(async () => {
     setUpload(true);
     
-    extractAudio().then(audioBuffer => {
-      const blob = new Blob([audioBuffer], {type: 'audio/wav'});
+    extractAudio().then(data => {
+      // data[0]: audioBuffer
+      // data[1]: audio duration(time)
+      
+      const blob = new Blob([data[0]], {type: 'audio/wav'});
       let formData = new FormData();
       formData.append('audio', blob)
-      console.log("audioblob: ", formData.get('audio'));
+      formData.append('duration', data[1])
 
-      axios.post('http://localhost:6001/asdf', formData)
-        .then(res => console.log(res))
+      axios.post('http://localhost:6001/audio', formData)
+        .then(res => {
+          const message = res.data;
+          // success if 문에 들어가야함... 일단 Temp
+          setUpload(true);
+          
+          if (message == 'success') {
+            
+          }
+          else {
+            // audio is empty: no one spoke in given video file..
+            console.log(res.data);
+          }
+        })
         .catch(err => console.log(err));
     });
     // setUpload(false);

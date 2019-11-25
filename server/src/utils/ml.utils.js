@@ -51,6 +51,10 @@ async function speechToText(fileName) {
   const result = response.results[response.results.length - 1];
 
   // TODO: handle exception case :  UnhandledPromiseRejectionWarning: TypeError: Cannot read property 'alternatives' of undefined
+  // return null; nothing now..
+  if (typeof result == 'undefined') {
+    return false;
+  }
   const wordsInfo = result.alternatives[0].words;
 
   var wordsList = wordsInfo.map(wordInfo => {

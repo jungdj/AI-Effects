@@ -67,7 +67,7 @@ const TongueSlip = () => {
       formData.append('audio', blob)
       console.log("audioblob: ", formData.get('audio'));
 
-      axios.post('http://localhost:6001/asdf', formData)
+      axios.post('http://localhost:6001/audio', formData)
         .then(res => console.log(res))
         .catch(err => console.log(err));
     });

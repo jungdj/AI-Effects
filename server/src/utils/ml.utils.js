@@ -1,10 +1,10 @@
 /* 여기 ml 관련된거 짜시구요 */
+import fs from 'fs'
 
 async function speechToText(fileName) {
   // Imports the Google Cloud client library
   // const speech = require('@google-cloud/speech');
   const speech = require('@google-cloud/speech').v1p1beta1;
-  const fs = require('fs');
 
   // Creates a client
   const client = new speech.SpeechClient();
@@ -51,6 +51,10 @@ async function speechToText(fileName) {
   const result = response.results[response.results.length - 1];
 
   // TODO: handle exception case :  UnhandledPromiseRejectionWarning: TypeError: Cannot read property 'alternatives' of undefined
+  // return null; nothing now..
+  if (typeof result == 'undefined') {
+    return false;
+  }
   const wordsInfo = result.alternatives[0].words;
 
   var wordsList = wordsInfo.map(wordInfo => {

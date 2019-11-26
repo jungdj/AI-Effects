@@ -3,6 +3,8 @@ certifi==2019.9.11
 chardet==3.0.4
 Click==7.0
 decorator==4.4.1
+face-recognition==1.2.3
+face-recognition-models==0.3.0
 Flask==1.1.1
 Flask-RESTful==0.3.7
 idna==2.8

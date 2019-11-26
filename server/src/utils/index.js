@@ -1,5 +1,6 @@
 import mongoose from "mongoose"
 import multer from 'multer';
+import path from 'path';
 
 export const parseJSON = (json) => {
 	try {
@@ -22,7 +23,12 @@ const storage = multer.diskStorage({
 		cb(null, 'static');
 	},
 	filename: (req, file, cb) => {
-		cb(null, getFileName (req.url.split('/')[1] + file.fieldName))
+    if (file.mimetype === 'video/') {
+      cb(null, getFileName (req.url.split('/')[1], 'mp4'))
+    }
+    else {
+      cb(null, getFileName (req.url.split('/')[1] , file.fieldName))
+    }
 	}
 })
 

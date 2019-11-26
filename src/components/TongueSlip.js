@@ -81,14 +81,16 @@ const TongueSlip = () => {
 
       axios.post('http://localhost:6001/audio', formData)
       .then(res => {
-        const data = res.data;
+        const data2 = res.data;
         // success if 문에 들어가야함... 일단 Temp
         setUpload(true);
 
         formData = new FormData();
         formData.append('video', video)
+        formData.append('cuttingList', JSON.stringify(data2))
+        formData.append('duration', data[1])
         
-        if (data.length > 0) {
+        if (data2.length > 0) {
           axios.post('http://localhost:6001/video/video-crop', formData)
           .then(res => {
             console.log("croped")

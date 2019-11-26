@@ -33,10 +33,19 @@ router.post('/audio', upload.single('audio'), (req, res) => {
     }
     else {
       const cuttingList = findWords(wordsList);
-      console.log("cuttingList: ", cuttingList);
       // TODO: cut video with given 'cuttingList' -> cuttingList가 empty list가 아닐때 잘라주기(length 이용)
       // TODO: different captions for each speaker with given 'wordsList[i].speakerTag'
-      res.send(cuttingList);
+      let tmp = [];
+      tmp.push({
+        'cut_start': 3.2,
+        'cut_end': 7,
+      });
+      tmp.push({
+        'cut_start': 8,
+        'cut_end': 10,
+      });
+      res.send(tmp);
+      // res.send(cuttingList);
     }
     
     // temporary host ip... TODO: need to change python-server host

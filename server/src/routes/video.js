@@ -86,27 +86,72 @@ router.get('/video-info', function (req, res) {
 	});
 });
 
-router.post('/video-crop', upload.single ('video'), function (req, res) {
+router.post('/video-crop', upload.single('video'), function (req, res) {
   const fileName = req.file.path;
+  console.log("fileName: ", fileName);
+  const cuttingList = JSON.parse(req.body.cuttingList);
+  const duration = req.body.duration;
 
+  console.log("video duration: ", duration);
 
-  ffmpeg(fileName) //Input Video File
-  .output('static/text_video.mp4') // Output File
-  .audioCodec('libmp3lame') // Audio Codec
-  .videoCodec('libx264') // Video Codec
-  .setStartTime(3) // Start Position
-  .setDuration(7) // Duration
-  .on('end', function (err) {
-    if (!err) {
-      console.log("Conversion Done");
-      res.send('Video Cropping Done');
+  console.log('cuttingList video: ', cuttingList);
+  console.log('cuttingList length: ', cuttingList.length);
+  // console.log("cuttingList[0].cut_start: ", cuttingList[0].cut_start);
+
+  let cut_start, cut_end, time;
+  for (let i=0; i <= cuttingList.length; i+=1) {
+    console.log("i: ", i)
+    if (i == 0) {
+      cut_start = 0;
+      cut_end = cuttingList[i].cut_start;
     }
+    else if (i == cuttingList.length) {
+      cut_start = cuttingList[i-1].cut_end;
+      cut_end = duration;
+    }
+    else {
+      cut_start = cuttingList[i-1].cut_end;
+      cut_end = cuttingList[i].cut_start;
+    }
+    time = cut_end - cut_start;
+    console.log("time: ", time);
 
-  })
-  .on('error', function (err) {
-    console.log('error: ', +err);
+    ffmpeg(fileName) //Input Video File
+    .format('mp4')
+    .save(fileName+'.mp4')
+    .output(fileName + '-cut-' + String(i) +'.mp4') // Output File
+    // .audioCodec('libmp3lame') // Audio Codec
+    // .videoCodec('libx264') // Video Codec
+    .toFormat('mp4')
+    .setStartTime(cut_start) // Start Position
+    .withDuration(time) // Duration
+    .run();
 
-  }).run();
+    console.log("check");
+
+    // if (i == 1) {
+    //   ffmpeg(fileName + '-cut-' + '0' +'.mp4')
+    //   .input(fileName + '-cut-' + '1' +'.mp4')
+    //   .mergeToFile(fileName + 'merge.mp4', 'static/merge');
+    // }
+    // else if (i > 1) {
+    //   ffmpeg(fileName + 'merge.mp4')
+    //   .input(fileName + '-cut-' + String(i) +'.mp4')
+    //   .mergeToFile(fileName + 'merge.mp4', 'static/merge');
+    // }
+  }
+  ffmpeg(fileName + '-cut-' + '0' +'.mp4')
+    .input(fileName + '-cut-' + '1' +'.mp4')
+    .on('error', function(err) {
+      console.log('An error occurred: ' + err.message);
+    })
+    .on('end', function() {
+      console.log('Merging finished !');
+    })
+    .mergeToFile(fileName + 'merge.mp4', 'static/merge');
+
+  res.send('Crop done');
+  // TODO: also need to merge!
 });
 
 router.get('/effect-fadein', function (req, res) {

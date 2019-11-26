@@ -14,7 +14,7 @@ export const parseJSON = (json) => {
 
 export const isValidId = mongoose.Types.ObjectId.isValid
 
-export const getTimestamp = () => (new Date().getTime()) / 1000;
+export const getTimestamp = () => { return String((new Date().getTime()) / 1000).split(".")[0] };
 export const getFileName = (name, extension) => `${name}-${getTimestamp()}${extension ? `.${extension}` : ''}`
 export const getFilePath = (name, extension) => `static/${getFileName(name, extension)}`
 
@@ -23,12 +23,8 @@ const storage = multer.diskStorage({
 		cb(null, 'static');
 	},
 	filename: (req, file, cb) => {
-    if (file.mimetype === 'video/') {
-      cb(null, getFileName (req.url.split('/')[1], 'mp4'))
-    }
-    else {
-      cb(null, getFileName (req.url.split('/')[1] , file.fieldName))
-    }
+    console.log('getTimeStamp: ', getTimestamp())
+    cb(null, getFileName (req.url.split('/')[1] , file.fieldName))
 	}
 })
 

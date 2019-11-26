@@ -29,7 +29,7 @@ const videoJsOptions = {
 		record: {
 			audio: true,
 			video: true,
-			maxLength: 10,
+			maxLength: 120,
 			debug: true
 		}
 	}
@@ -82,7 +82,8 @@ const VideoWrapper = styled.video`
 const Instructions = {
 	first: <>Record Your<br/> First Video</>,
 	second: <>Record Your<br/> Second Video</>,
-	faceBlur1: <>Record Your<br/> Face blur video</>,
+  faceBlur1: <>Record Your<br/> Face blur video</>,
+  tongueSlip: <>Record Your<br/> Text Video</>,
 }
 const VideoRecord = ({ id, processVideo }) => {
 	let player;

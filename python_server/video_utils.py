@@ -11,3 +11,8 @@ def mergeVideos(video1, video2, output_path):
     clip2 = VideoFileClip(video2)
     final_clip = concatenate_videoclips([clip1,clip2])
     final_clip.write_videofile(output_path, temp_audiofile='temp-audio.m4a', remove_temp=True, codec="libx264", audio_codec="aac")
+
+def processVideo(video_path, output_path, *process):
+    clip = VideoFileClip(video_path)
+    clip = clip.fx(*process)
+    clip.write_videofile(output_path, temp_audiofile='temp-audio.m4a', remove_temp=True, codec="libx264", audio_codec="aac")

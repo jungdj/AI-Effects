@@ -1,9 +1,10 @@
 import numpy as np
 import cv2
+import video_utils
 from scipy.interpolate import interp1d
 from moviepy.editor import VideoFileClip
 
-def blurFaces(clip, net, confidence_threshold):
+def faceDetectBlur(clip, net, confidence_threshold):
     #if r_blur is None: r_blur = 2*r_zone/3
     
     def fl(gf,t):
@@ -48,12 +49,12 @@ def blurFaces(clip, net, confidence_threshold):
         return im_copy
     
     return clip.fl(fl)
-
-def blurFaces(input_video, output_path):
+    
+def blurAllFaces(video_path, output_path):
     model = "input/res10_300x300_ssd_iter_140000[1].caffemodel"
-    prototxt = "input/deploy.prototxt[1].txt"   # Caffe 'deploy' prototxt file
+    prototxt = "input/deploy.prototxt[1].txt"
     confidence = 0.5
     net = cv2.dnn.readNetFromCaffe(prototxt, model)
-    clip = VideoFileClip(input_video)
-    clip = clip.fx(blurFaces, net, confidence)
-    clip.write_videofile(output_path, temp_audiofile='temp-audio.m4a', remove_temp=True, codec="libx264", audio_codec="aac")
+    video_utils.processVideo(video_path, output_path, faceDetectBlur, net, confidence)
+
+# blurAllFaces('media/sample1.mov', 'media/output1.mp4')

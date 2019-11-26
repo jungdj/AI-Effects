@@ -22,6 +22,7 @@
     "@babel/core": "^7.4.3",
     "@babel/preset-env": "^7.4.3",
     "@babel/register": "^7.4.0",
+    "@ffmpeg-installer/ffmpeg": "^1.0.20",
     "aws-sdk": "^2.485.0",
     "axios": ">=0.18.1",
     "body-parser": "^1.19.0",

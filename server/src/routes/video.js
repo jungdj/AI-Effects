@@ -1,9 +1,12 @@
 import fs from 'fs';
 import express from 'express';
-import ffmpeg from 'fluent-ffmpeg';
 import probe from 'node-ffprobe';
 
 import { upload, getFilePath } from "../utils"
+
+const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
+const ffmpeg = require('fluent-ffmpeg');
+ffmpeg.setFfmpegPath(ffmpegPath);
 
 const  router = express.Router();
 
@@ -85,41 +88,25 @@ router.get('/video-info', function (req, res) {
 
 router.post('/video-crop', upload.single ('video'), function (req, res) {
   const fileName = req.file.path;
-  console.log("fileName: ", fileName);
-  // var url = '../' + fileName;
-	// fs.exists(url, function (exists) {
-	// 	if (exists) {
-	// 		fs.unlink(url, function (err, data) {
-	// 			if (!err) {
-	// 				console.log("Existing File Deleted . . . ");
-	// 			}
-	// 		});
-	// 	}
-  // });
 
-  const time = ffmpeg(fileName).seekInput(3);
-  console.log("time: ", time);
 
-	ffmpeg(fileName) //Input Video File
-		.output('../static/text_video.mp4') // Output File
-		// .audioCodec('libmp3lame') // Audio Codec
-		// .videoCodec('libx264') // Video Codec
-		.seekInput(3) // Start Position
-		.duration(5) // Duration
-		.on('end', function (err) {
-			if (!err) {
+  ffmpeg(fileName) //Input Video File
+  .output('static/text_video.mp4') // Output File
+  .audioCodec('libmp3lame') // Audio Codec
+  .videoCodec('libx264') // Video Codec
+  .setStartTime(3) // Start Position
+  .setDuration(7) // Duration
+  .on('end', function (err) {
+    if (!err) {
+      console.log("Conversion Done");
+      res.send('Video Cropping Done');
+    }
 
-				console.log("Conversion Done");
-				res.send('Video Cropping Done');
+  })
+  .on('error', function (err) {
+    console.log('error: ', +err);
 
-      }
-      console.log("error: ?", err);
-
-		})
-		.on('error', function (err) {
-			console.log('error: ', +err);
-
-		}).run();
+  }).run();
 });
 
 router.get('/effect-fadein', function (req, res) {

@@ -5,7 +5,6 @@ import VideoRecord from './VideoRecord';
 import PageTemplate from './PageTemplate';
 
 import axios from 'axios';
-import { readFile } from "fs";
 
 var toWav = require('audiobuffer-to-wav')
 
@@ -28,15 +27,15 @@ const Wrapper = styled.div`
 `
 
 const TongueSlip = () => {
-  const [src, setSrc] = useState('')
+  const [src, setSrc] = useState('');
+  const [video, setVideo] = useState('');
   const [uploading, setUpload] = useState (false, []);
   const [videofile, setVideofile] = useState('');
 
-  let formData = null;
-
   const processVideo = (id, video) => {
+    setVideo(video);
     setSrc(window.URL.createObjectURL(video));
-    setVideofile('')
+    setVideofile('');
     setUpload(false);
     // console.log("video: ", video)
   }
@@ -63,7 +62,6 @@ const TongueSlip = () => {
       soundSource.start();
 
       return offlineAudioContext.startRendering();
-      // return [offlineAudioContext.startRendering(), duration];
     }).then( renderedBuffer => {
       return [toWav(renderedBuffer), renderedBuffer.duration]
     })
@@ -80,19 +78,32 @@ const TongueSlip = () => {
       let formData = new FormData();
       formData.append('audio', blob)
       formData.append('duration', data[1])
-      
+
       axios.post('http://localhost:6001/audio', formData)
       .then(res => {
-        const message = res.data;
+        const data2 = res.data;
         // success if 문에 들어가야함... 일단 Temp
         setUpload(true);
+
+        formData = new FormData();
+        formData.append('video', video)
+        formData.append('cuttingList', JSON.stringify(data2))
+        formData.append('duration', data[1])
         
-        if (message == 'success') {
-          
+        if (data2.length > 0) {
+          axios.post('http://localhost:6001/video/video-crop', formData)
+          .then(res => {
+            console.log("croped")
+          }).catch(err => console.log(err));
         }
         else {
           // audio is empty: no one spoke in given video file..
-          console.log(res.data);
+          // console.log(res.data);
+          // temp -> need to remove
+          axios.post('http://localhost:6001/video/video-crop', formData)
+          .then(res => {
+            console.log("croped")
+          }).catch(err => console.log(err));
         }
       })
       .catch(err => console.log(err));
@@ -102,6 +113,8 @@ const TongueSlip = () => {
 
   const handleChange = e => {
     setVideofile(e.target.value);
+    const blob = new Blob([e.target.files[0]], {type: 'video/'});
+    setVideo(blob);
     setSrc(window.URL.createObjectURL(e.target.files[0]));
     setUpload(false);
   }
@@ -112,7 +125,7 @@ const TongueSlip = () => {
       {uploading
       ? (
       <Wrapper>
-
+        <button onClick={upload}>Upload</button>
       </Wrapper>
       ) : (
       <Wrapper>

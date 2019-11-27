@@ -1,10 +1,13 @@
 import express from "express"
-import userRoutes from "./user"
+import videoRoutes from './video';
 import {speechToText, findWords} from '../utils/ml.utils'
+import { upload } from "../utils"
 import request from 'request'
+import ffmpeg from 'fluent-ffmpeg'
+import fs from 'fs'
 
-var multer  = require('multer')
-var upload = multer({ dest: 'uploads/' })
+// var multer  = require('multer')
+// var upload = multer({ dest: 'uploads/' })
 
 const router = express.Router()
 
@@ -17,7 +20,7 @@ router.get("/hc", (req, res) => {
 	res.sendStatus(200);
 })
 
-router.use("/user", userRoutes)
+router.use("/video", videoRoutes)
 
 router.post('/audio', upload.single('audio'), (req, res) => {
   const fileName = req.file.path;
@@ -26,18 +29,28 @@ router.post('/audio', upload.single('audio'), (req, res) => {
   speechToText(fileName, duration).then((wordsList) => {
     if (!wordsList) {
       console.log("No one spoke in video!");
-      res.status(200).send('nothing to cut');
+      res.send([]);
     }
     else {
       const cuttingList = findWords(wordsList);
-      console.log("cuttingList: ", cuttingList);
       // TODO: cut video with given 'cuttingList' -> cuttingList가 empty list가 아닐때 잘라주기(length 이용)
       // TODO: different captions for each speaker with given 'wordsList[i].speakerTag'
-      res.status(200).send('success');
+      let tmp = [];
+      tmp.push({
+        'cut_start': 3.2,
+        'cut_end': 7,
+      });
+      tmp.push({
+        'cut_start': 8,
+        'cut_end': 10,
+      });
+      res.send(tmp);
+      // res.send(cuttingList);
     }
+    
     // temporary host ip... TODO: need to change python-server host
-    request.get('http://127.0.0.1:5000/temp')
-    console.log("get - localhost:5000/temp")
+    // request.get('http://127.0.0.1:5000/temp')
+    // console.log("get - localhost:5000/temp")
   });
 
 })

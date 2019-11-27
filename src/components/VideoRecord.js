@@ -5,8 +5,8 @@ import 'video.js/dist/video-js.css';
 import videojs from 'video.js';
 import 'webrtc-adapter';
 import RecordRTC from 'recordrtc';
-import 'videojs-record/dist/css/videojs.record.css';
 import Record from 'videojs-record/dist/videojs.record.js';
+import 'videojs-record/dist/css/videojs.record.css';
 
 const videoJsOptions = {
 	controls: true,
@@ -30,7 +30,17 @@ const videoJsOptions = {
 			audio: true,
 			video: true,
 			maxLength: 120,
-			debug: true
+      debug: true,
+      // convertEngine: 'ffmpeg.js',
+      // // convert recorded data to MP3
+      // convertOptions: ['-f', 'mp4', '-codec:v'],
+      // // convertOptions: ['-f', 'mp4', '-codec:v', 'libmp3lame', '-qscale:a', '2'],
+      // // specify MP3 output mime-type
+      // pluginLibraryOptions: {
+      //   outputType: 'audio/mp4'
+      // },
+      // // use MP4 encoding worker (H.264 & AAC & MP3 encoders)
+      // convertWorkerURL: '../../node_modules/ffmpeg.js/ffmpeg-worker-mp4.js'
 		}
 	}
 };
@@ -123,7 +133,19 @@ const VideoRecord = ({ id, processVideo }) => {
 				// will be interpreted in the server as a file
 				// let formData = new FormData();
 				// formData.append('video', player.recordedData.video);
-			});
+      });
+      
+      // converter started processing
+      // player.on('startConvert', function() {
+      //   console.log('started converting!');
+      // });
+      // // converter completed and stream is available
+      // player.on('finishConvert', function() {
+      //   // the convertedData object contains the recorded data that
+      //   // can be downloaded by the user, stored on server etc.
+      //   console.log('finished converting: ', player.convertedData);
+      //   processVideo (id, player.convertedData);
+      // });
 
 			// error handling
 			player.on('error', (element, error) => {

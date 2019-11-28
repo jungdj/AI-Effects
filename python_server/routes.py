@@ -4,7 +4,9 @@ import os
 import sys
 import face_models
 import blur_utils
-from flask import Flask, render_template, Response
+from flask import Flask, render_template, request, redirect, url_for, Response
+from flask_cors import CORS
+from werkzeug.utils import secure_filename
 from flask_restful import Resource, Api, reqparse
 from config import (
   basedir,
@@ -24,14 +26,18 @@ from video_utils import (
   newWordList,
   addSubtitles,
 )
+UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), 'uploads')
 
 app = Flask(__name__)
+CORS(app)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 api = Api(app)
 
 @app.route('/')
 @app.route('/index')
 def index():
+    return 'hello world'
     return render_template('index.html')
 
 
@@ -54,6 +60,32 @@ def video_feed():
     return Response(gen(fr),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
+class Upload(Resource):
+    def post(self):
+        if 'file' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+
+        file = request.files['file']
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+
+        if file:
+            filename = secure_filename(file.filename)
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(filepath)
+
+            fr = face_models.FaceRecog(filepath, 0.5)
+            blur_utils.blurAllFaces(filepath, os.path.join(app.config['UPLOAD_FOLDER'], 'result', 'blur_' + filename))
+            return redirect(url_for('upload',
+                                    filename=filename))
+
+        return redirect(request.url)
+        
+    def get(self):
+      return 'hello upload'
+
 class Temp(Resource):
     def post(self):
       return
@@ -69,103 +101,6 @@ class Temp(Resource):
         'resources',
         'audio.raw')
 
-      # duration = getAudioLength(audio_path)
-      # print("duration: ", duration)
-
-      words_list = speech_to_text(audio_path)
-      cutting_list = find_words(words_list)
-
-      # temp cutting_list
-      cutting_list = []
-      cutting_list.append({
-        'cut_start': 3.2,
-        'cut_end': 7.0,
-      })
-      cutting_list.append({
-        'cut_start': 8.2,
-        'cut_end': 10.0,
-      })
-
-      # temp words_list
-      words_list = [
-        {
-          'value': 'rockbuster',
-          'start_secs': 2.3,
-          'end_secs': 3.2,
-          'speaker_tag': 2
-        },
-        { 'value': 'the', 'start_secs': 3.2, 'end_secs': 4.2, 'speaker_tag': 2 },
-        { 'value': 'stock', 'start_secs': 4.2, 'end_secs': 4.7, 'speaker_tag': 2 },
-        { 'value': 'that', 'start_secs': 4.7, 'end_secs': 4.9, 'speaker_tag': 2 },
-        { 'value': 'the', 'start_secs': 4.9, 'end_secs': 5.0, 'speaker_tag': 2 },
-        { 'value': 'judge', 'start_secs': 5.0, 'end_secs': 5.4, 'speaker_tag': 2 },
-        { 'value': 'that', 'start_secs': 5.4, 'end_secs': 6.7, 'speaker_tag': 2 },
-        { 'value': 'will', 'start_secs': 6.7, 'end_secs': 7.0, 'speaker_tag': 2 },
-        { 'value': 'be', 'start_secs': 7.0, 'end_secs': 7.1, 'speaker_tag': 2 },
-        {
-          'value': 'obstacles',
-          'start_secs': 7.1,
-          'end_secs': 7.4,
-          'speaker_tag': 2
-        },
-        { 'value': 'but', 'start_secs': 7.4, 'end_secs': 8.2, 'speaker_tag': 2 },
-        { 'value': "it's", 'start_secs': 8.2, 'end_secs': 8.4, 'speaker_tag': 2 },
-        { 'value': 'all', 'start_secs': 8.4, 'end_secs': 8.6, 'speaker_tag': 2 },
-        { 'value': 'about', 'start_secs': 8.6, 'end_secs': 8.7, 'speaker_tag': 2 },
-        { 'value': 'finding', 'start_secs': 8.7, 'end_secs': 9.1, 'speaker_tag': 2 },
-        { 'value': 'a', 'start_secs': 9.1, 'end_secs': 9.5, 'speaker_tag': 2 },
-        { 'value': 'way', 'start_secs': 9.5, 'end_secs': 9.7, 'speaker_tag': 2 },
-        {
-          'value': 'through',
-          'start_secs': 9.7,
-          'end_secs': 10.0,
-          'speaker_tag': 2
-        },
-        {
-          'value': 'bushing',
-          'start_secs': 10.0,
-          'end_secs': 11.5,
-          'speaker_tag': 2
-        },
-        { 'value': 'on', 'start_secs': 11.5, 'end_secs': 11.6, 'speaker_tag': 2 },
-        {
-          'value': 'upwards',
-          'start_secs': 11.6,
-          'end_secs': 13.1,
-          'speaker_tag': 2
-        },
-        { 'value': 'until', 'start_secs': 13.9, 'end_secs': 14.5, 'speaker_tag': 2 },
-        {
-          'value': 'finally',
-          'start_secs': 14.5,
-          'end_secs': 14.9,
-          'speaker_tag': 2
-        },
-        {
-          'value': 'reaching',
-          'start_secs': 14.9,
-          'end_secs': 15.7,
-          'speaker_tag': 2
-        },
-        { 'value': 'the', 'start_secs': 15.7, 'end_secs': 15.9, 'speaker_tag': 2 },
-        { 'value': 'talk', 'start_secs': 15.9, 'end_secs': 16.4, 'speaker_tag': 2 },
-        {
-          'value': 'Buxton',
-          'start_secs': 16.4,
-          'end_secs': 17.9,
-          'speaker_tag': 2
-        },
-        { 'value': 'his', 'start_secs': 17.9, 'end_secs': 18.7, 'speaker_tag': 2 },
-        { 'value': 'to', 'start_secs': 18.7, 'end_secs': 18.8, 'speaker_tag': 2 },
-        { 'value': 'the', 'start_secs': 18.8, 'end_secs': 18.9, 'speaker_tag': 2 },
-        {
-          'value': 'up-and-coming',
-          'start_secs': 18.9,
-          'end_secs': 19.6,
-          'speaker_tag': 2
-        }
-      ]
-      
       merge_video_path = os.path.join(
         os.path.dirname(__file__),
         'resources',
@@ -183,6 +118,7 @@ class Temp(Resource):
       return 'hello...?'
 
 api.add_resource(Temp, "/temp")
+api.add_resource(Upload, "/upload")
 
 if __name__ == '__main__':
     # ip_address = utils.get_ip_address()

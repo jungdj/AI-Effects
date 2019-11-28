@@ -1,4 +1,5 @@
 aniso8601==8.0.0
+astroid==2.3.3
 cachetools==3.1.1
 certifi==2019.9.11
 chardet==3.0.4
@@ -9,6 +10,7 @@ dlib==19.18.0
 face-recognition==1.2.3
 face-recognition-models==0.3.0
 Flask==1.1.1
+Flask-Cors==3.0.8
 Flask-RESTful==0.3.7
 google-api-core==1.14.3
 google-auth==1.7.1
@@ -18,9 +20,12 @@ grpcio==1.25.0
 idna==2.8
 imageio==2.6.1
 imageio-ffmpeg==0.3.0
+isort==4.3.21
 itsdangerous==1.1.0
 Jinja2==2.10.3
+lazy-object-proxy==1.4.3
 MarkupSafe==1.1.1
+mccabe==0.6.1
 moviepy==1.0.0
 numpy==1.17.4
 opencv-python==4.1.2.30
@@ -29,6 +34,7 @@ proglog==0.1.9
 protobuf==3.11.0
 pyasn1==0.4.8
 pyasn1-modules==0.2.7
+pylint==2.4.4
 python-dotenv==0.10.3
 pytz==2019.3
 requests==2.22.0
@@ -36,5 +42,7 @@ rsa==4.0
 scipy==1.3.3
 six==1.13.0
 tqdm==4.39.0
+typed-ast==1.4.0
 urllib3==1.25.7
 Werkzeug==0.16.0
+wrapt==1.11.2

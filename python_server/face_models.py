@@ -68,12 +68,14 @@ class FaceRecog():
             for face_encoding in self.face_encodings:
                 # See if the face is a match for the known face(s)
                 distances = face_recognition.face_distance(self.known_face_encodings, face_encoding)
-                min_value = min(distances)
-
                 name = "Unknown"
-                if min_value < self.tolerance:
-                    index = np.argmin(distances)
-                    name = self.known_face_names[index]
+
+                if distances:
+                    min_value = min(distances)
+
+                    if min_value < self.tolerance:
+                        index = np.argmin(distances)
+                        name = self.known_face_names[index]
 
                 self.face_names.append(name)
 

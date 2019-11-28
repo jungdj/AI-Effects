@@ -56,6 +56,7 @@ const FaceBlur = () => {
 	return (
 		<PageTemplate>
 			<Wrapper>
+				<img src="http://localhost:5000/video_feed" />
 				<video id="abc" width="320" height="179" autoPlay controls src={ sampleVideo } ref={inputVideo} onPlay={onPlay}/>
 				<canvas ref={canvas}/>
 			</Wrapper>

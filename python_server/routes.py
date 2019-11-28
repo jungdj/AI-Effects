@@ -27,6 +27,8 @@ from video_utils import (
   addSubtitles,
 )
 UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), 'uploads')
+if not os.path.isdir(UPLOAD_FOLDER):
+		os.mkdir(UPLOAD_FOLDER)
 
 app = Flask(__name__)
 CORS(app)
@@ -82,7 +84,7 @@ class Upload(Resource):
                                     filename=filename))
 
         return redirect(request.url)
-        
+
     def get(self):
       return 'hello upload'
 

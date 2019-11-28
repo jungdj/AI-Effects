@@ -39,7 +39,7 @@ const Wrapper = styled.div`
 `
 
 function App() {
-  const [type, setType] = useState("voice")
+  const [type, setType] = useState("main")
 	const [shrinked, setShrinked] = useState(false);
 	useEffect(() => {
 		var shrinkHeader = 100;

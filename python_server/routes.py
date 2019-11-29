@@ -6,6 +6,7 @@ import json
 import face_models
 import blur_utils
 from werkzeug.utils import secure_filename
+from datetime import date, datetime, timedelta
 from flask import (
     Flask,
     request,
@@ -14,7 +15,8 @@ from flask import (
     jsonify,
     abort,
     Response,
-    render_template
+    render_template,
+    flash,
 )
 from flask_cors import CORS
 from flask_restful import Resource, Api, reqparse
@@ -23,6 +25,8 @@ from config import (
     PORT_NUMBER,
     HTTP,
     ADDR,
+    UPLOAD_FOLDER,
+    UPLOAD_SPEECH_FOLDER,
 )
 from moviepy.editor import VideoFileClip
 from speechToText import (
@@ -38,9 +42,10 @@ from video_utils import (
     addSubtitles,
 )
 
-UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), 'uploads')
 if not os.path.isdir(UPLOAD_FOLDER):
 		os.mkdir(UPLOAD_FOLDER)
+if not os.path.isdir(UPLOAD_SPEECH_FOLDER):
+		os.mkdir(UPLOAD_SPEECH_FOLDER)
 
 app = Flask(__name__)
 CORS(app)
@@ -104,38 +109,46 @@ class Upload(Resource):
 
 class SpeechToText(Resource):
     def post(self):
-        return 'get?'
-    # def post(self):
-    def get(self):
-        # get audio file from frontend wav!
-        # temp
-        video_path = os.path.join(
-            os.path.dirname(__file__),
-            'resources',
-            'test2.mov')
-        audio_path = os.path.join(
-            os.path.dirname(__file__),
-            'resources',
-            'test2.wav')
-        videoToAudio(video_path, 'resources/test2.wav')
+        return 'get request'
+    
+    def post(self):
+        if 'file' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+        
+        file = request.files['file']
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+        
+        if file:
+            fname = file.filename
+            only_fname = os.path.splitext(fname)
+            extension = only_fname[1]
+            only_fname = only_fname[0]
+
+            filename = secure_filename(only_fname + '-' + str(datetime.now()) + extension)
+            filepath = os.path.join(UPLOAD_SPEECH_FOLDER, filename)
+            file.save(filepath)
+        
+        # get only filename without extension
+        filename = os.path.splitext(filename)[0]
+        audio_name = filename + '.wav'
+        subtitle_video_name = filename + '_subtitle.mp4'
+
+        video_path = filepath
+        audio_path = os.path.join(UPLOAD_SPEECH_FOLDER, audio_name)
+        subtitle_video_path = os.path.join(UPLOAD_SPEECH_FOLDER, subtitle_video_name)
+
+        videoToAudio(video_path, audio_path)
 
         words_list = speech_to_text(audio_path)
         cutting_list = find_words(words_list)
-        # print("words_list: ", words_list)
         
-        merge_video_path = os.path.join(
-            os.path.dirname(__file__),
-            'resources',
-            'merge_test_video.mp4')
-        subtitle_video_path = os.path.join(
-            os.path.dirname(__file__),
-            'resources',
-            'subtitle_test_video.mp4')
-        
-        mergeVideos(video_path, merge_video_path, cutting_list)
+        merge_video = mergeVideos(video_path, cutting_list)
         # need mergeVideo's each text word (start, end) time
         new_words_list = newWordList(words_list, cutting_list)
-        addSubtitles(merge_video_path, subtitle_video_path, new_words_list)
+        addSubtitles(merge_video, subtitle_video_path, new_words_list)
 
         return 'hello...?'
 

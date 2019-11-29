@@ -28,7 +28,7 @@ def processVideo(video_path, output_path, *process):
     clip = clip.fx(*process)
     clip.write_videofile(output_path, temp_audiofile='temp-audio.m4a', remove_temp=True, codec="libx264", audio_codec="aac")
 
-def mergeVideos(video_path, output_path, cutting_list):
+def mergeVideos(video_path, cutting_list):
     video = VideoFileClip(video_path)
     duration = video.duration
 
@@ -50,7 +50,7 @@ def mergeVideos(video_path, output_path, cutting_list):
         clip_videos.append(clip)
     
     final_clip = concatenate_videoclips(clip_videos)
-    final_clip.write_videofile(output_path, temp_audiofile='temp-audio.m4a', remove_temp=True, codec="libx264", audio_codec="aac")
+    return final_clip
 
 
 def newWordList(words_list, cutting_list):
@@ -93,9 +93,8 @@ def annotate(clip, txt, speaker, txt_color='white', fontsize=30, font='Arial'):
     cvc = CompositeVideoClip([clip, txtclip.set_pos(('center', 'bottom'))])
     return cvc.set_duration(clip.duration)
 
-def addSubtitles(video_path, output_path, words_list):
+def addSubtitles(video, output_path, words_list):
     # video = merged new video file
-    video = VideoFileClip(video_path)
     duration = video.duration
 
     subs = []

@@ -7,64 +7,67 @@ from google.cloud.speech_v1p1beta1 import types
 
 # TODO: receive fileName, duration
 def speech_to_text(audio_path):
-  # Instantiates a client
-  client = speech.SpeechClient()
+    # Instantiates a client
+    client = speech.SpeechClient()
 
-  # Loads the audio into memory
-  with io.open(audio_path, 'rb') as audio_file:
-    content = audio_file.read()
-    audio = types.RecognitionAudio(content=content)
+    # Loads the audio into memory
+    with io.open(audio_path, 'rb') as audio_file:
+        content = audio_file.read()
+        audio = types.RecognitionAudio(content=content)
 
-  config = types.RecognitionConfig(
+    config = types.RecognitionConfig(
     encoding=enums.RecognitionConfig.AudioEncoding.LINEAR16,
     # encoding=enums.RecognitionConfig.AudioEncoding.ENCODING_UNSPECIFIED,
     sample_rate_hertz=16000,
     language_code='en-US',
     enable_word_time_offsets=True,
     enable_speaker_diarization=True,
-    diarization_speaker_count=2,
+    diarization_speaker_count=3,
+    audio_channel_count=2,
     # model='video',
     )
 
-  # async longrunnning audio file to text
-  operation = client.long_running_recognize(config, audio)
+    # async longrunnning audio file to text
+    operation = client.long_running_recognize(config, audio)
 
-  # Detects speech in the audio file
-  print("Waiting for operation to complete...")
-  # response = client.recognize(config, audio)
-  response = operation.result(timeout=90)
+    # Detects speech in the audio file
+    print("Waiting for operation to complete...")
+    # response = client.recognize(config, audio)
+    response = operation.result(timeout=90)
 
-  '''
-  Each result is for a consecutive portion of the audio. Iterate through
-  them to get the transcripts for the entire audio file.
-  '''
-  words_list = []
-  for result in response.results:
+    '''
+    Each result is for a consecutive portion of the audio. Iterate through
+    them to get the transcripts for the entire audio file.
+    '''
+    words_list = []
+
+    # for result in response.results:
+    result = response.results[-1]
     alternative = result.alternatives[0]
     print(u'Transcript: {}'.format(alternative.transcript))
     print('Confidence: {}'.format(alternative.confidence))
 
     for word_info in alternative.words:
-      word = word_info.word
-      start_time = word_info.start_time
-      start_secs = start_time.seconds + start_time.nanos * 1e-9
-      end_time = word_info.end_time
-      end_secs = end_time.seconds + end_time.nanos * 1e-9
-      
-      print('Word: {}, start_time: {}, end_time: {}, speaker_tag: {}'.format(
+        word = word_info.word
+        start_time = word_info.start_time
+        start_secs = start_time.seconds + start_time.nanos * 1e-9
+        end_time = word_info.end_time
+        end_secs = end_time.seconds + end_time.nanos * 1e-9
+        
+        print('Word: {}, start_time: {}, end_time: {}, speaker_tag: {}'.format(
         word,
         start_time.seconds + start_time.nanos * 1e-9,
         end_time.seconds + end_time.nanos * 1e-9,
         word_info.speaker_tag,
-      ))
+        ))
 
-      words_list.append({
+        words_list.append({
         'value': word_info.word,
         'start_secs': start_secs,
         'end_secs': end_secs,
         'speaker_tag': word_info.speaker_tag,
-      })
-  return words_list
+        })
+    return words_list
 
 def find_words(words_list):
   signals = 'no no'.split(' ')

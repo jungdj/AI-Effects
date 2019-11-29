@@ -2,30 +2,42 @@
 # -*- coding:utf-8 -*-
 import os
 import sys
+import json
 import face_models
 import blur_utils
-from flask import Flask, render_template, request, redirect, url_for, Response
-from flask_cors import CORS
 from werkzeug.utils import secure_filename
+from flask import (
+    Flask,
+    request,
+    redirect,
+    url_for,
+    jsonify,
+    abort,
+    Response,
+    render_template
+)
+from flask_cors import CORS
 from flask_restful import Resource, Api, reqparse
 from config import (
-  basedir,
-  PORT_NUMBER,
-  HTTP,
-  ADDR,
+    basedir,
+    PORT_NUMBER,
+    HTTP,
+    ADDR,
 )
 from moviepy.editor import VideoFileClip
 from speechToText import (
-  speech_to_text,
-  find_words
+    speech_to_text,
+    find_words
 )
 from video_utils import (
-  getAudioLength,
-  getVideoLength,
-  mergeVideos,
-  newWordList,
-  addSubtitles,
+    videoToAudio,
+    getAudioLength,
+    getVideoLength,
+    mergeVideos,
+    newWordList,
+    addSubtitles,
 )
+
 UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), 'uploads')
 if not os.path.isdir(UPLOAD_FOLDER):
 		os.mkdir(UPLOAD_FOLDER)
@@ -33,6 +45,8 @@ if not os.path.isdir(UPLOAD_FOLDER):
 app = Flask(__name__)
 CORS(app)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+CORS(app)
 
 api = Api(app)
 
@@ -88,38 +102,44 @@ class Upload(Resource):
     def get(self):
       return 'hello upload'
 
-class Temp(Resource):
+class SpeechToText(Resource):
     def post(self):
-      return
+        return 'get?'
+    # def post(self):
     def get(self):
-      # get audio file from frontend wav!
-      # temp
-      video_path = os.path.join(
-        os.path.dirname(__file__),
-        'resources',
-        'test_video.mp4')
-      audio_path = os.path.join(
-        os.path.dirname(__file__),
-        'resources',
-        'audio.raw')
+        # get audio file from frontend wav!
+        # temp
+        video_path = os.path.join(
+            os.path.dirname(__file__),
+            'resources',
+            'test2.mov')
+        audio_path = os.path.join(
+            os.path.dirname(__file__),
+            'resources',
+            'test2.wav')
+        videoToAudio(video_path, 'resources/test2.wav')
 
-      merge_video_path = os.path.join(
-        os.path.dirname(__file__),
-        'resources',
-        'merge_test_video.mp4')
-      subtitle_video_path = os.path.join(
-        os.path.dirname(__file__),
-        'resources',
-        'subtitle_test_video.mp4')
-      
-      mergeVideos(video_path, merge_video_path, cutting_list)
-      # mergeVideo의 text time이 필요...
-      new_words_list = newWordList(words_list, cutting_list)
-      addSubtitles(merge_video_path, subtitle_video_path, new_words_list)
+        words_list = speech_to_text(audio_path)
+        cutting_list = find_words(words_list)
+        # print("words_list: ", words_list)
+        
+        merge_video_path = os.path.join(
+            os.path.dirname(__file__),
+            'resources',
+            'merge_test_video.mp4')
+        subtitle_video_path = os.path.join(
+            os.path.dirname(__file__),
+            'resources',
+            'subtitle_test_video.mp4')
+        
+        mergeVideos(video_path, merge_video_path, cutting_list)
+        # need mergeVideo's each text word (start, end) time
+        new_words_list = newWordList(words_list, cutting_list)
+        addSubtitles(merge_video_path, subtitle_video_path, new_words_list)
 
-      return 'hello...?'
+        return 'hello...?'
 
-api.add_resource(Temp, "/temp")
+api.add_resource(SpeechToText, "/video_crop")
 api.add_resource(Upload, "/upload")
 
 if __name__ == '__main__':

@@ -62,13 +62,11 @@ const TongueSlip = () => {
       soundSource.start();
 
       return offlineAudioContext.startRendering();
-    }).then( renderedBuffer => {
-      return [toWav(renderedBuffer), renderedBuffer.duration]
-    })
-    .catch(err => console.log('Rendering failed: ', err));
+    }).then( renderedBuffer => toWav(renderedBuffer)
+    ).catch(err => console.log('Rendering failed: ', err));
   }
 
-  const upload = useCallback(async () => {
+  const upload2 = useCallback(async () => {
     
     extractAudio().then(data => {
       // data[0]: audioBuffer
@@ -79,7 +77,7 @@ const TongueSlip = () => {
       formData.append('audio', blob)
       formData.append('duration', data[1])
 
-      axios.post('http://localhost:6001/audio', formData)
+      axios.post('http://localhost:5000/audio', formData)
       .then(res => {
         const data2 = res.data;
         // success if 문에 들어가야함... 일단 Temp
@@ -91,7 +89,7 @@ const TongueSlip = () => {
         formData.append('duration', data[1])
         
         if (data2.length > 0) {
-          axios.post('http://localhost:6001/video/video-crop', formData)
+          axios.post('http://localhost:5000/video/video-crop', formData)
           .then(res => {
             console.log("croped")
           }).catch(err => console.log(err));
@@ -109,6 +107,22 @@ const TongueSlip = () => {
       .catch(err => console.log(err));
     });
     // setUpload(false);
+  }, [uploading, src])
+
+  const upload = useCallback(async () => {
+    
+    extractAudio().then(data => {
+      let audioBuffer = data;
+      const audioBlob = new Blob([audioBuffer], {type: 'audio/wav'});
+      let formData = new FormData();
+      formData.append('file', audioBlob)
+      
+      axios.post('http://localhost:5000/video_crop', data=formData
+      ).then(res => {
+          console.log("response: ", res)
+      }).catch(err => console.log(err));
+
+    }).catch(err => console.log("err"))
   }, [uploading, src])
 
   const handleChange = e => {

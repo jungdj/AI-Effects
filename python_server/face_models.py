@@ -29,12 +29,13 @@ class FaceRecog():
         self.known_face_names = []
 
         # Load sample pictures and learn how to recognize it.
-        dirname = 'knowns'
+        dirname = 'uploads/knowns'
         files = os.listdir(dirname)
         for filename in files:
             name, ext = os.path.splitext(filename)
             if ext == '.jpg':
                 self.known_face_names.append(name)
+                print(name)
                 pathname = os.path.join(dirname, filename)
                 img = face_recognition.load_image_file(pathname)
                 face_encoding = face_recognition.face_encodings(img)[0]
@@ -69,13 +70,12 @@ class FaceRecog():
                 # See if the face is a match for the known face(s)
                 distances = face_recognition.face_distance(self.known_face_encodings, face_encoding)
                 name = "Unknown"
+                # if distances != None:
+                min_value = min(distances)
 
-                if distances:
-                    min_value = min(distances)
-
-                    if min_value < self.tolerance:
-                        index = np.argmin(distances)
-                        name = self.known_face_names[index]
+                if min_value < self.tolerance:
+                    index = np.argmin(distances)
+                    name = self.known_face_names[index]
 
                 self.face_names.append(name)
 
@@ -95,7 +95,7 @@ class FaceRecog():
             # font = cv2.FONT_HERSHEY_DUPLEX
             # cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
 
-            if name != "Unknown":
+            if name == "Unknown":
                 orig = frame[top:bottom, left:right]
                 blurred = cv2.GaussianBlur(orig,(39, 39), 30)
                 frame[top:bottom, left:right] = blurred

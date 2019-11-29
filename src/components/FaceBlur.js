@@ -5,9 +5,13 @@ import styled from 'styled-components';
 // import PoseProgress from './PoseProgress';
 
 import PageTemplate from "./PageTemplate"
-import Upload from "./Upload"
 
+import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+const server_addr = 'http://localhost:5000/upload'
 const Wrapper = styled.div`
+	color: white;
 	display: flex;
 	flex-direction: column; 
 	position: relative;
@@ -22,16 +26,84 @@ const Wrapper = styled.div`
 		width: 320px;
 		height: auto;
 	}
+	img {
+		height: auto;
+		width: 200px;
+	}
 `
 const FaceBlur = () => {
+	const [uploading, setUpload] = useState(false, []);
+	const [videofile, setVideofile] = useState([]);
+	const [imagefile, setImagefile] = useState([]);
+	const [imageuploaded, setImageuploaded] = useState([]);
+
+	const handleVideoChange = e => {
+		setVideofile(e.target.files);
+		setUpload(false);
+	}
+	const handleImageChange = e => {
+		setImagefile(e.target.files)
+	}
+	const uploadVideo = useCallback(async () => {
+		if (videofile.length === 1) {
+			const data = new FormData();
+			data.append('file', videofile[0])
+			axios.post(server_addr, data)
+				.then(res => {
+					console.log("response: ", res)
+					toast.success('upload success')
+				}).catch(err => {
+					console.log(err)
+					toast.error('upload fail')
+				});
+		}
+	}, [uploading, videofile])
+
+	const uploadImages = useCallback(async () => {
+		const data = new FormData();
+		console.log(imagefile)
+		for (var x = 0; x < imagefile.length; x++) {
+			data.append('file', imagefile[x])
+		}
+		axios.post(server_addr + '/knowns', data)
+			.then(res => {
+				console.log("response: ", res)
+				toast.success('upload success')
+			}).catch(err => {
+				console.log(err)
+				toast.error('upload fail')
+			});
+	}, [uploading, imagefile])
+
+	const blurFaces = useCallback(async () => {
+		console.log(videofile.length)
+		if (videofile.length === 1) {
+			window.open(server_addr + videofile[0].name)
+		}
+	}, [uploading, videofile])
+
 	return (
 		<PageTemplate>
 			<Wrapper>
-				<img src="http://localhost:5000/video_feed" />
-				{/* <video id="abc" width="320" height="179" autoPlay controls src={ sampleVideo } ref={inputVideo} onPlay={onPlay}/> */}
-				{/* <canvas ref={canvas}/> */}
+				<form className='upload-video'>
+					<label>
+						Select Video: &nbsp;
+					<input type="file" name="videos" accept="video/*" onChange={handleVideoChange} />
+					</label>
+				</form>
+				<button onClick={uploadVideo}>Upload Video</button>
+
+				<form className='upload-image'>
+					<label>
+						People not to blur: &nbsp;
+					<input type="file" name="photos" accept="image/jpeg" multiple onChange={handleImageChange} />
+					</label>
+				</form>
+				<button onClick={uploadImages}>Upload Images</button>
+
+				<img src= {server_addr + "/video_feed"} />
+				<button onClick={blurFaces}>blurFaces</button>
 			</Wrapper>
-			<Upload />
 		</PageTemplate>
 	)
 }

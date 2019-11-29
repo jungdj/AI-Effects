@@ -16,6 +16,7 @@ from flask import (
     abort,
     Response,
     render_template,
+    send_from_directory,
     flash,
 )
 from flask_cors import CORS
@@ -81,6 +82,16 @@ def video_feed():
     return Response(gen(fr),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
+@app.route('/uploads/<path:filename>')
+def download_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'],filename, as_attachment=True)
+
+@app.route('/blur/<path:filename>')
+def blur_faces(filename):
+    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    blur_utils.blurOtherFaces(filepath, os.path.join(app.config['UPLOAD_FOLDER'], 'blur_' + filename))
+    return 'blur done'
+  
 class Upload(Resource):
     def post(self):
         if 'file' not in request.files:
@@ -96,16 +107,28 @@ class Upload(Resource):
             filename = secure_filename(file.filename)
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(filepath)
-
-            fr = face_models.FaceRecog(filepath, 0.5)
-            blur_utils.blurAllFaces(filepath, os.path.join(app.config['UPLOAD_FOLDER'], 'result', 'blur_' + filename))
-            return redirect(url_for('upload',
-                                    filename=filename))
-
+            return filename
         return redirect(request.url)
 
     def get(self):
-      return 'hello upload'
+        return 'get /upload'
+
+class Knowns(Resource):
+    def post(self):
+        if 'file' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+
+        for f in request.files.getlist('file'):
+            if f.filename == '':
+                flash('No selected file')
+                return redirect(request.url)
+            f.save(os.path.join(app.config['UPLOAD_FOLDER'], 'knowns', f.filename))
+        
+        return 'upload complete'
+    def get(self):
+        return 'get /upload/knowns'
+
 
 class SpeechToText(Resource):
     def post(self):
@@ -154,6 +177,8 @@ class SpeechToText(Resource):
 
 api.add_resource(SpeechToText, "/video_crop")
 api.add_resource(Upload, "/upload")
+api.add_resource(Knowns, "/upload/knowns")
+
 
 if __name__ == '__main__':
     # ip_address = utils.get_ip_address()

@@ -13,6 +13,7 @@ const Wrapper = styled.div`
 	background-color: rgb(35, 35, 35);
 	* {
 		display: flex;
+		color: white;
 	}
 	section {
 		border: 0.1px solid lightslategrey;
@@ -55,6 +56,12 @@ const Row2 = styled.section`
 	display: flex;
 	width: 100%;
 	flex: 3;
+	.panel-1 {
+		flex: 2;
+	}
+	.panel-2 {
+		flex: 3;
+	}
 `
 
 const PWTWrapper = styled.div`
@@ -176,20 +183,32 @@ const Dashboard = () => {
 		<Wrapper>
 			<Row1>
 				<section className="panel-1">
-					<section className="panel-1-1"></section>
-					<section className="panel-1-2"></section>
+					<section className="panel-1-1">
+						<h1>Original Videos</h1>
+					</section>
+					<section className="panel-1-2">
+						<h1>Upload & Generate Videos</h1>
+					</section>
 				</section>
 				<section className="panel-2">
-
 					<PaneWithTabs tabs={tabData.tabs} cur={tabData.cur} tabAction={tabAction}/>
 				</section>
 				<section className="panel-3">
-					<section className="panel-3-1"></section>
-					<section className="panel-3-2"></section>
+					<section className="panel-3-1">
+						<h1>Known People</h1>
+					</section>
+					<section className="panel-3-2">
+						<h1>Subtitles</h1>
+					</section>
 				</section>
 			</Row1>
 			<Row2>
-
+				<section className="panel-1">
+					<h1>Generated Videos</h1>
+				</section>
+				<section className="panel-2">
+					<h1>Operations on Progress</h1>
+				</section>
 			</Row2>
 		</Wrapper>
 	)

@@ -2,6 +2,7 @@
 # -*- coding:utf-8 -*-
 import os
 import sys
+# <<<<<<< HEAD
 import json
 import face_models
 import blur_utils
@@ -20,6 +21,12 @@ from flask import (
     flash,
 )
 from flask_cors import CORS
+# =======
+# import face_models
+import pose_models
+import pose_utils
+# from flask import Flask, render_template, Response
+# >>>>>>> pose_detect
 from flask_restful import Resource, Api, reqparse
 from config import (
     basedir,
@@ -64,13 +71,14 @@ def index():
     return render_template('index.html')
 
 
-def gen(fr):
-    jpg_bytes = fr.get_jpg_bytes()
+def gen(bt):
+    jpg_bytes = bt.get_jpg_bytes()
     while jpg_bytes:
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + jpg_bytes + b'\r\n\r\n')
-        jpg_bytes = fr.get_jpg_bytes()
+        jpg_bytes = bt.get_jpg_bytes()
 
+# <<<<<<< HEAD
 
 @app.route('/video_feed/<path:filename>')
 def video_feed(filename):

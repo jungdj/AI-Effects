@@ -63,7 +63,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 CORS(app)
 
 api = Api(app)
-
+app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 @app.route('/')
 @app.route('/index')
 def index():
@@ -200,7 +200,8 @@ class SpeechToText(Resource):
         return 'hello...?'
 
 # input : One video
-# output : One video with skeleton
+# output : video with skeleton
+# form format {'file' : video want to get skeleton}
 @app.route('/add_pose_skeleton', methods = ['POST'])
 def add_pose_skeleton():
     if 'file' not in request.files:
@@ -244,14 +245,63 @@ def add_pose_skeleton():
 
     return 'PANIC cannot reach here'
 
-# input : two video
+# input : two video, optional one text
 # output : Merged One video (skeleton or not)
-class PoseDetectMerge(Resource):
-    def get(self):
-        return 'get request'
+# form format {'first' : first video to merge(type file)
+#              'second' : second video to merge(type file)
+#              (Optional)'with_skeleton' : if merge video need skeleton true of True. default False}
+def merge():
+    if request.method == 'POST':
+        if 'first' not in request.files or 'second' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
 
-    def post(self):
-        return 'post request'
+        file1 = request.files['first']
+        file2 = request.files['second']
+
+        if file1.filename == '' or file2.filename =='':
+            flash('No selected file')
+            return redirect(request.url)
+
+        with_skeleton = False
+        if request.form['with_skeleton'] == "true" or request.form['with_skeleton'] == "True":
+            with_skeleton = True
+        if file1 and file2:
+            ts=time.time()
+            ts=str(int(ts))
+            temp_dir = os.path.join(UPLOAD_POSE_FOLDER, ts)
+            if os.path.isdir(temp_dir):
+                flash("There are too many requests. Please run it again in a moment.")
+                return "Multiple request at same time error"
+            os.mkdir(temp_dir)
+
+            filename1 = secure_filename(file1.filename)
+            filepath1 = os.path.join(temp_dir, filename1)
+            file1.save(filepath1)
+
+            filename2 = secure_filename(file2.filename)
+            filepath2 = os.path.join(temp_dir, filename2)
+            file2.save(filepath2)
+
+            # get only filename without extension
+            file_without_ext = os.path.splitext(filename1)[0]
+            ext = os.path.splitext(filename1)[1]
+            output_name = file_without_ext + "_with_pose" + ext
+            output_path = os.path.join(temp_dir, output_name)
+
+            pose_utils.TwoVideoProcess(filepath1, filepath2, output_path, with_skeleton)
+
+            @after_this_request
+            def delete_temp_files(response):
+                os.remove(filepath1)
+                os.remove(filepath2)
+                os.remove(output_path)
+                os.rmdir(temp_dir)
+                return response
+
+            return send_from_directory(directory=temp_dir, filename=output_name)
+
+        return 'PANIC cannot reach here'
 
 api.add_resource(SpeechToText, "/video_crop")
 api.add_resource(Upload, "/upload")

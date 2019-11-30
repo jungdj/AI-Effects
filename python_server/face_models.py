@@ -3,6 +3,7 @@ import cv2
 import face_recognition
 import os
 
+
 class VideoCamera(object):
     def __init__(self, video_path = None):
         if video_path == None:  # webcam

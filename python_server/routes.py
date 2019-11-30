@@ -32,6 +32,7 @@ from config import (
 from moviepy.editor import VideoFileClip
 from speechToText import (
     speech_to_text,
+    find_youknow,
     find_words
 )
 from video_utils import (
@@ -165,6 +166,7 @@ class SpeechToText(Resource):
 
         words_list = speech_to_text(audio_path)
         cutting_list = find_words(words_list)
+        # cutting_list = find_youknow(words_list)
 
         merge_video = None
         new_words_list = None

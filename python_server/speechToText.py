@@ -69,6 +69,28 @@ def speech_to_text(audio_path):
         })
     return words_list
 
+def find_youknow(words_list):
+  signals = 'you know'.split(' ')
+  s_length = len(signals)
+  cutting_list = []
+  for i in range(len(words_list)):
+    if (words_list[i]['value'] == signals[0]):
+      match = True
+      for j in range(i+1, i+s_length):
+        if (j > len(words_list)-1):
+          match = False
+          break
+        elif (words_list[j]['value'] != signals[j-i]):
+          match = False
+          break
+
+      if (match):
+        cutting_list.append({
+          'cut_start': words_list[i]['start_secs'],
+          'cut_end': words_list[i+2]['start_secs'],
+        })
+  return cutting_list
+
 def find_words(words_list):
   signals = 'no no'.split(' ')
   s_length = len(signals)

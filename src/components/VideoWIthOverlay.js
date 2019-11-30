@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import "video-react/dist/video-react.css"; // import css
 import { Player } from 'video-react';
 
 const Wrapper = styled.div`

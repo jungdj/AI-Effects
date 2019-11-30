@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import styled from "styled-components";
 import {
-	BrowserRouter as Router,
 	Switch,
 	Route,
 	Link,
+	useLocation
 } from "react-router-dom";
+import "animate.css"
+import "video-react/dist/video-react.css"; // import css
 
 import Main from "./components/Main"
 import TongueSlip from "./components/TongueSlip"
 import Pose from "./components/Pose"
 import FaceBlur from "./components/FaceBlur"
 import ProfileCheck from "./components/ProfileCheck"
-
-import "animate.css"
 
 import logo from "./static/logo.png";
 import Dashboard from "./components/Dashboard"
@@ -48,6 +48,7 @@ const Wrapper = styled.div`
 
 function App() {
 	const [shrinked, setShrinked] = useState(false);
+	const location = useLocation ();
 	useEffect(() => {
 		var shrinkHeader = 100;
 		function getCurrentScroll() {
@@ -65,35 +66,36 @@ function App() {
 	}, [])
 
   return (
-		<Router>
-			<Wrapper>
+		<Wrapper>
+			{
+				location.pathname != '/dashboard' &&
 				<header className={shrinked ? 'shrink' : ''}>
 					<Link to={"/"}>
 						<img src={logo} style={{ cursor: 'pointer' }}/>
 					</Link>
 				</header>
+			}
 
-				<ProfileCheck />
+			<ProfileCheck />
 
-				<Switch>
-					<Route path="/pose">
-						<Pose />
-					</Route>
-					<Route path="/voice">
-						<TongueSlip />
-					</Route>
-					<Route path="/main">
-						<TongueSlip />
-					</Route>
-					<Route path="/dashboard">
-						<Dashboard />
-					</Route>
-					<Route path="/">
-						<Main />
-					</Route>
-				</Switch>
-			</Wrapper>
-		</Router>
+			<Switch>
+				<Route path="/pose">
+					<Pose />
+				</Route>
+				<Route path="/voice">
+					<TongueSlip />
+				</Route>
+				<Route path="/main">
+					<TongueSlip />
+				</Route>
+				<Route path="/dashboard">
+					<Dashboard />
+				</Route>
+				<Route path="/">
+					<Main />
+				</Route>
+			</Switch>
+		</Wrapper>
   )
 }
 

@@ -1,11 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
 
+import VideoInput from "./VideoInput"
+
 const Wrapper = styled.div`
 	width: 100vw;
 	height: 100vh;
 	display: flex;
 	flex-direction: column;
+	background-color: rgb(35, 35, 35);
 	* {
 		display: flex;
 	}
@@ -30,6 +33,8 @@ const Row1 = styled.section`
 	}
 	.panel-2 {
 		flex: 3;
+		align-items: center;
+		justify-content: center;
 	}
 	.panel-3 {
 		flex: 1;
@@ -59,6 +64,7 @@ const Dashboard = () => {
 				</section>
 				<section className="panel-2">
 
+					<VideoInput />
 				</section>
 				<section className="panel-3">
 					<section className="panel-3-1"></section>

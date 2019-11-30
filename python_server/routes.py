@@ -166,13 +166,18 @@ class SpeechToText(Resource):
         words_list = speech_to_text(audio_path)
         cutting_list = find_words(words_list)
 
+        merge_video = None
+        new_words_list = None
+
         if (len(cutting_list) == 0):
+            merge_video = VideoFileClip(video_path)
             print("Nothing to cut!")
-            return 'Nothing to cut'
-        
-        merge_video = mergeVideos(video_path, cutting_list)
-        # need mergeVideo's each text word (start, end) time
-        new_words_list = newWordList(words_list, cutting_list)
+            new_words_list = words_list
+        else:
+            merge_video = mergeVideos(video_path, cutting_list)
+            # need mergeVideo's each text word (start, end) time
+            new_words_list = newWordList(words_list, cutting_list)
+
         addSubtitles(merge_video, subtitle_video_path, new_words_list)
 
         return 'hello...?'

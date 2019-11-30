@@ -11,10 +11,12 @@ import Main from "./components/Main"
 import TongueSlip from "./components/TongueSlip"
 import Pose from "./components/Pose"
 import FaceBlur from "./components/FaceBlur"
+import ProfileCheck from "./components/ProfileCheck"
 
 import "animate.css"
 
 import logo from "./static/logo.png";
+import Dashboard from "./components/Dashboard"
 
 const Wrapper = styled.div`
   background-color: rgb(20, 20, 20);
@@ -71,12 +73,20 @@ function App() {
 					</Link>
 				</header>
 
+				<ProfileCheck />
+
 				<Switch>
 					<Route path="/pose">
 						<Pose />
 					</Route>
 					<Route path="/voice">
 						<TongueSlip />
+					</Route>
+					<Route path="/main">
+						<TongueSlip />
+					</Route>
+					<Route path="/dashboard">
+						<Dashboard />
 					</Route>
 					<Route path="/">
 						<Main />

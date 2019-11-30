@@ -1,6 +1,13 @@
 import React from "react"
 import styled, { css } from "styled-components"
 
+import dj from '../static/dj.jpg';
+import gogi from '../static/gogi.jpg';
+import yuns from '../static/yuns.jpg';
+import ssul from '../static/ssul.jpg';
+
+const pics = { dj, gogi, yuns, ssul }
+
 const Wrapper = styled.div`
 	width: 100vw;
 	min-height: 100vh;
@@ -64,16 +71,6 @@ const Wrapper = styled.div`
 		max-width: 200px;
 		min-width: 84px;
 		margin: 0 2vw 0 0;
-		&:first-child {
-			.profile-icon {
-				background-image: url("https://www.edgee.co.uk/demo/posenet/demo.jpg");
-			}
-		}
-		&:nth-child(2) {
-			.profile-icon {
-				background-image: url("https://is2-ssl.mzstatic.com/image/thumb/Purple113/v4/b0/52/52/b05252a6-4a35-51bb-9ba8-50d4452a0f05/AppIcon-0-1x_U007emarketing-0-0-GLES2_U002c0-512MB-sRGB-0-0-0-85-220-0-0-0-7.png/246x0w.jpg");
-			}
-		}
 	}
 	
 	.avatar-wrapper {
@@ -139,42 +136,31 @@ const Wrapper = styled.div`
 	
 `
 
-const ServiceList = ({ setType, loading}) => {
+const ProfileList = ({ selectProfile, loading}) => {
 	return (
 		<Wrapper loading={loading}>
 			<div className="list-profiles">
-				<div className="profile-gate-label">Choose Menu</div>
+				<div className="profile-gate-label">Choose Profile</div>
 				<ul className="choose-profile">
-					<li className="profile">
-						<div>
-							<a className="profile-link" tabIndex="0" onClick={() => setType('pose')}>
-								<div className="avatar-wrapper">
-									<div className="profile-icon"/>
+					{
+						[
+							{ name: '윤아', key: 'ssul', },
+							{ name: '병서', key: 'gogi', },
+							{ name: '동진', key: 'dj', },
+							{ name: '윤서', key: 'yuns', },
+						].map(({ name, key }) => (
+							<li className="profile">
+								<div>
+									<a className="profile-link" tabIndex="0" onClick={() => selectProfile(key)}>
+										<div className="avatar-wrapper">
+											<img className="profile-icon" src={pics[key]}/>
+										</div>
+										<span className="profile-name">{name}</span>
+									</a>
 								</div>
-								<span className="profile-name">Pose</span>
-							</a>
-						</div>
-					</li>
-					<li className="profile">
-						<div>
-							<a className="profile-link" tabIndex="0" href="#" onClick={() => setType('voice')}>
-								<div className="avatar-wrapper">
-									<div className="profile-icon"/>
-								</div>
-								<span className="profile-name">Voice</span>
-							</a>
-						</div>
-					</li>
-					<li className="profile">
-						<div>
-							<a className="profile-link" tabIndex="0" href="#" onClick={() => setType('face')}>
-								<div className="avatar-wrapper">
-									<div className="profile-icon"/>
-								</div>
-								<span className="profile-name">Face Blur</span>
-							</a>
-						</div>
-					</li>
+							</li>
+						))
+					}
 					{/*<li>*/}
 					{/*	<a role="link" tabIndex="0" href="https://github.com/jungdj">*/}
 					{/*		<div className="addProfileIcon icon-tvuiAdd"></div>*/}
@@ -184,10 +170,10 @@ const ServiceList = ({ setType, loading}) => {
 				</ul>
 			</div>
 			<div className="profile-button preferred-action">
-				<a target="_blank" href="https://github.com/jungdj/ml-video-trim-tool-ui">Wanna Contribute?</a>
+				<a target="_blank" href="https://github.com/jungdj/ml-video-trim-tool-ui">Wanna Be a Member?</a>
 			</div>
 		</Wrapper>
 	)
 }
 
-export default ServiceList
+export default ProfileList

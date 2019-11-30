@@ -1,10 +1,11 @@
 import React, { useCallback, useState } from "react"
 import styled from "styled-components";
 import { useHistory } from 'react-router-dom'
+import storage from "../utils/storage"
 
 import Intro from "./Intro"
 import Spinner from "./Spinner"
-import ServiceList from "./ServiceList"
+import ProfileList from "./ProfileList"
 
 const Wrapper = styled.div`
 	
@@ -13,10 +14,11 @@ const Wrapper = styled.div`
 const Main = () => {
 	const [loading, setLoading] = useState(false);
 	const history = useHistory ();
-	const setTypeWithLoading = useCallback((type) => {
+	const setProfileWithLoading = useCallback((name) => {
 		setLoading(true);
 		setTimeout (() => {
-			history.push(`/${type}`);
+			storage.setItem ('profile', name)
+			history.push(`/main`);
 			setLoading(false);
 		}, 1500);
 	}, []);
@@ -25,7 +27,7 @@ const Main = () => {
 		<Wrapper>
 			<Intro key={0} />
 			{loading && <Spinner/>}
-			<ServiceList setType={setTypeWithLoading} loading={loading}/>
+			<ProfileList selectProfile={setProfileWithLoading} loading={loading}/>
 		</Wrapper>
 	)
 }

@@ -3,10 +3,10 @@ import styled, { css } from "styled-components"
 
 import dj from '../static/dj.jpg';
 import gogi from '../static/gogi.jpg';
-import yuns from '../static/yuns.jpg';
-import ssul from '../static/ssul.jpg';
+import youns from '../static/youns.jpeg';
+import seol from '../static/seol.jpg';
 
-const pics = { dj, gogi, yuns, ssul }
+const pics = { dj, gogi, youns, seol }
 
 const Wrapper = styled.div`
 	width: 100vw;
@@ -144,10 +144,10 @@ const ProfileList = ({ selectProfile, loading}) => {
 				<ul className="choose-profile">
 					{
 						[
-							{ name: 'Seol', key: 'ssul', },
+							{ name: 'Seol', key: 'seol', },
 							{ name: 'Gogi', key: 'gogi', },
 							{ name: 'Dongjin', key: 'dj', },
-							{ name: 'Yuns', key: 'yuns', },
+							{ name: 'Youns', key: 'youns', },
 						].map(({ name, key }) => (
 							<li className="profile">
 								<div>

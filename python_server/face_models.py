@@ -3,7 +3,6 @@ import cv2
 import face_recognition
 import os
 
-
 class VideoCamera(object):
     def __init__(self, video_path = None):
         if video_path == None:  # webcam
@@ -119,9 +118,7 @@ class FaceRecog():
         return clip.fl(fl)
 
 
-def faceDetectBlur(clip, net, confidence_threshold):
-    #if r_blur is None: r_blur = 2*r_zone/3
-    
+def faceDetectBlur(clip, net, confidence_threshold):    
     def fl(gf,t):
         im = gf(t)
         im_copy = im.copy()
@@ -129,30 +126,20 @@ def faceDetectBlur(clip, net, confidence_threshold):
         
         blob = cv2.dnn.blobFromImage(cv2.resize(im, (300, 300), interpolation = cv2.INTER_AREA), 1.0,
             (300, 300), (104.0, 177.0, 123.0))
-     
-    	# pass the blob through the network and obtain the detections and
-    	# predictions
         net.setInput(blob)
         detections = net.forward()
     	
         # loop over the detections
         for i in range(0, detections.shape[2]):
-            # extract the confidence (i.e., probability) associated with the
-            # prediction
             confidence = detections[0, 0, i, 2]
-        
-            # filter out weak detections by ensuring the `confidence` is
-            # greater than the minimum confidence
             if confidence < confidence_threshold:
                 continue
         
-            # compute the (x, y)-coordinates of the bounding box for the
-            # object
+            # compute bounding box
             box = detections[0, 0, i, 3:7] * np.array([w, h, w, h])
             (startX, startY, endX, endY) = box.astype("int")
         
-            # draw the bounding box of the face along with the associated
-            # probability
+            # draw the bounding box
             # text = "{:.2f}%".format(confidence * 100)
             # y = startY - 10 if startY - 10 > 10 else startY + 10
             # cv2.rectangle(im, (startX, startY), (endX, endY), (0, 0, 255), 2)
@@ -164,3 +151,48 @@ def faceDetectBlur(clip, net, confidence_threshold):
         return im_copy
     
     return clip.fl(fl)
+
+def videoExtractFaces(path): 
+    video = cv2.VideoCapture(path) 
+    count = 0
+
+    model = "input/res10_300x300_ssd_iter_140000.caffemodel"
+    prototxt = "input/deploy.prototxt"
+    net = cv2.dnn.readNetFromCaffe(prototxt, model)
+    confidence_threshold = 0.5
+
+    success, image = video.read()
+    while success:
+        imageExtractFaces(image, net, confidence_threshold, count)
+        # cv2.imwrite(ouput_dir + "/frame%d.jpg" % count, image) 
+        count += 1
+        success, image = video.read()   
+
+
+def imageExtractFaces(im, net, confidence_threshold, frame_number):
+    ouput_dir = "faces"      
+    if not os.path.exists(ouput_dir):
+        os.makedirs(ouput_dir)
+
+    h,w,d = im.shape
+    blob = cv2.dnn.blobFromImage(cv2.resize(im, (300, 300), interpolation = cv2.INTER_AREA), 1.0,
+        (300, 300), (104.0, 177.0, 123.0))
+    
+    net.setInput(blob)
+    detections = net.forward()
+    count = 0
+
+    # Create frame around face
+    for i in range(0, detections.shape[2]):
+        confidence = detections[0, 0, i, 2]
+        if confidence < confidence_threshold:   # filter out weak detections
+            continue
+    
+        # compute bounding box
+        box = detections[0, 0, i, 3:7] * np.array([w, h, w, h])
+        (startX, startY, endX, endY) = box.astype("int")
+
+        count += 1
+        frame = im[startY:endY, startX:endX]
+        if frame.size:
+            cv2.imwrite(ouput_dir + '/' + str(frame_number) + '_' + str(i) + '.jpg', frame)

@@ -30,6 +30,7 @@ from config import (
     ADDR,
     UPLOAD_FOLDER,
     UPLOAD_SPEECH_FOLDER,
+    SPEECHTOTEXT_SPEAKER_COUNT,
 )
 from moviepy.editor import VideoFileClip
 from speechToText import (
@@ -165,7 +166,7 @@ class SpeechToText(Resource):
 
         videoToAudio(video_path, audio_path)
 
-        words_list = speech_to_text(audio_path)
+        words_list = speech_to_text(audio_path, SPEECHTOTEXT_SPEAKER_COUNT)
         cutting_list = find_words(words_list)
         # cutting_list = find_youknow(words_list)
 

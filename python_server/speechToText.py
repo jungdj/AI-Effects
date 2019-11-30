@@ -6,7 +6,7 @@ from google.cloud.speech_v1p1beta1 import enums
 from google.cloud.speech_v1p1beta1 import types
 
 # TODO: receive fileName, duration
-def speech_to_text(audio_path):
+def speech_to_text(audio_path, SPEECHTOTEXT_SPEAKER_COUNT):
     # Instantiates a client
     client = speech.SpeechClient()
 
@@ -22,7 +22,7 @@ def speech_to_text(audio_path):
     language_code='en-US',
     enable_word_time_offsets=True,
     enable_speaker_diarization=True,
-    diarization_speaker_count=3,
+    diarization_speaker_count=SPEECHTOTEXT_SPEAKER_COUNT,
     audio_channel_count=2,
     # model='video',
     )

@@ -86,18 +86,7 @@ def video_feed(filename):
     filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     fr = face_models.FaceRecog(filepath, tolerance)
     return Response(gen(fr),
-# =======
-# @app.route('/video_feed')
-# def video_feed():
-#     input_video = "media/sample1.mov"
-#     output_path = "media/output1.mp4"
-#     # fr = face_models.FaceRecog()
-#     bt = pose_models.BodyDetect()
-#     # fr = face_models.FaceRecog(input_video, tolerance)
-#     # blur_utils.blurOtherFaces(input_video, output_path)
-#     return Response(gen(bt),
-# >>>>>>> pose_detect
-#                     mimetype='multipart/x-mixed-replace; boundary=frame')
+                    mimetype='multipart/x-mixed-replace; boundary=frame')
 
 @app.route('/upload/<path:filename>')
 def download_file(filename):

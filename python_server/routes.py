@@ -71,18 +71,16 @@ def gen(fr):
         jpg_bytes = fr.get_jpg_bytes()
 
 
-@app.route('/video_feed')
-def video_feed():
-    input_video = "media/sample1.mov"
+@app.route('/video_feed/<path:filename>')
+def video_feed(filename):
     tolerance = 0.5
-    output_path = "media/output1.mp4"
-    fr = face_models.FaceRecog()
-    # fr = face_models.FaceRecog(input_video, tolerance)
-    # blur_utils.blurOtherFaces(input_video, output_path)
+    # fr = face_models.faceDetectBlur()
+    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    fr = face_models.FaceRecog(filepath, tolerance)
     return Response(gen(fr),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
-@app.route('/uploads/<path:filename>')
+@app.route('/upload/<path:filename>')
 def download_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'],filename, as_attachment=True)
 
@@ -90,8 +88,8 @@ def download_file(filename):
 def blur_faces(filename):
     filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     blur_utils.blurOtherFaces(filepath, os.path.join(app.config['UPLOAD_FOLDER'], 'blur_' + filename))
-    return 'blur done'
-  
+    return send_from_directory(app.config['UPLOAD_FOLDER'],'blur_'+filename, as_attachment=True)
+
 class Upload(Resource):
     def post(self):
         if 'file' not in request.files:

@@ -20,15 +20,12 @@ class VideoCamera(object):
 # tolerance: How much distance between faces to consider it a match. Lower is more strict.
 class FaceRecog():
     def __init__(self, video_path = None, tolerance = 0.4):
-        # Using OpenCV to capture from device 0. If you have trouble capturing
-        # from a webcam, comment the line below out and use a video file
-        # instead.
         self.camera = VideoCamera(video_path)
 
         self.known_face_encodings = []
         self.known_face_names = []
 
-        # Load sample pictures and learn how to recognize it.
+        # Load pictures of known people and learn how to recognize it.
         dirname = 'uploads/knowns'
         files = os.listdir(dirname)
         for filename in files:

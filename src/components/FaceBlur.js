@@ -9,7 +9,7 @@ import PageTemplate from "./PageTemplate"
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-const server_addr = 'http://localhost:5000/upload'
+const server_addr = 'http://localhost:5000/'
 const Wrapper = styled.div`
 	color: white;
 	display: flex;
@@ -48,7 +48,7 @@ const FaceBlur = () => {
 		if (videofile.length === 1) {
 			const data = new FormData();
 			data.append('file', videofile[0])
-			axios.post(server_addr, data)
+			axios.post(server_addr + 'upload', data)
 				.then(res => {
 					console.log("response: ", res)
 					toast.success('upload success')
@@ -65,7 +65,7 @@ const FaceBlur = () => {
 		for (var x = 0; x < imagefile.length; x++) {
 			data.append('file', imagefile[x])
 		}
-		axios.post(server_addr + '/knowns', data)
+		axios.post(server_addr + 'upload/knowns', data)
 			.then(res => {
 				console.log("response: ", res)
 				toast.success('upload success')
@@ -78,7 +78,7 @@ const FaceBlur = () => {
 	const blurFaces = useCallback(async () => {
 		console.log(videofile.length)
 		if (videofile.length === 1) {
-			window.open(server_addr + videofile[0].name)
+			window.open(server_addr + 'blur/' + videofile[0].name)
 		}
 	}, [uploading, videofile])
 
@@ -101,7 +101,12 @@ const FaceBlur = () => {
 				</form>
 				<button onClick={uploadImages}>Upload Images</button>
 
-				<img src= {server_addr + "/video_feed"} />
+				<img src= {server_addr + "video_feed/yunagyurac.mov"} />
+				<video controls width="250">
+					<source src={server_addr + "upload/yunagyurac.mov" }
+							type="video/webm" />
+					Sorry, your browser doesn't support embedded videos.
+				</video>
 				<button onClick={blurFaces}>blurFaces</button>
 			</Wrapper>
 		</PageTemplate>

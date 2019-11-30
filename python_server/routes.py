@@ -2,10 +2,11 @@
 # -*- coding:utf-8 -*-
 import os
 import sys
-# <<<<<<< HEAD
 import json
 import face_models
 import blur_utils
+import pose_models
+import pose_utils
 from werkzeug.utils import secure_filename
 from datetime import date, datetime, timedelta
 from flask import (
@@ -21,12 +22,6 @@ from flask import (
     flash,
 )
 from flask_cors import CORS
-# =======
-# import face_models
-import pose_models
-import pose_utils
-# from flask import Flask, render_template, Response
-# >>>>>>> pose_detect
 from flask_restful import Resource, Api, reqparse
 from config import (
     basedir,
@@ -77,8 +72,6 @@ def gen(bt):
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + jpg_bytes + b'\r\n\r\n')
         jpg_bytes = bt.get_jpg_bytes()
-
-# <<<<<<< HEAD
 
 @app.route('/video_feed/<path:filename>')
 def video_feed(filename):

@@ -30,5 +30,5 @@ def TwoVideoProcess(video_path1, video_path2, output_path, with_skeleton=False):
 
 # detectAllPoses("media/sample1.mp4", 'media/output1.mp4')
 # detectAllPoses("media/beforejump.mp4", 'media/outputbefore.mp4')
-# detectAllPoses("media/afterjump.mp4", 'media/outputafter.mp4')
+detectAllPoses("media/afterjump.mp4", 'media/outputafter.mp4')
 TwoVideoProcess("media/beforejump.mp4", "media/afterjump.mp4", "media/jump.mp4", True)

@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from "react"
 import styled from "styled-components";
+import { useHistory } from 'react-router-dom'
 
 import Intro from "./Intro"
 import Spinner from "./Spinner"
@@ -9,12 +10,13 @@ const Wrapper = styled.div`
 	
 `;
 
-const Main = ({ setType }) => {
+const Main = () => {
 	const [loading, setLoading] = useState(false);
+	const history = useHistory ();
 	const setTypeWithLoading = useCallback((type) => {
 		setLoading(true);
 		setTimeout (() => {
-			setType(type)
+			history.push(`/${type}`);
 			setLoading(false);
 		}, 1500);
 	}, []);

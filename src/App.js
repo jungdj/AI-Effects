@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import styled from "styled-components";
+import {
+	BrowserRouter as Router,
+	Switch,
+	Route,
+	Link,
+} from "react-router-dom";
 
 import Main from "./components/Main"
 import TongueSlip from "./components/TongueSlip"
@@ -39,7 +45,6 @@ const Wrapper = styled.div`
 `
 
 function App() {
-  const [type, setType] = useState("main")
 	const [shrinked, setShrinked] = useState(false);
 	useEffect(() => {
 		var shrinkHeader = 100;
@@ -57,18 +62,28 @@ function App() {
 		})
 	}, [])
 
-	let Content = Main
-	if (type === 'pose') Content = Pose;
-	if (type === 'voice') Content = TongueSlip;
-	if (type === 'face') Content = FaceBlur;
-
   return (
-    <Wrapper>
-			<header className={shrinked ? 'shrink' : ''}>
-				<img src={logo} onClick={() => setType()} style={{ cursor: 'pointer' }}/>
-			</header>
-      <Content setType={setType} />
-    </Wrapper>
+		<Router>
+			<Wrapper>
+				<header className={shrinked ? 'shrink' : ''}>
+					<Link to={"/"}>
+						<img src={logo} style={{ cursor: 'pointer' }}/>
+					</Link>
+				</header>
+
+				<Switch>
+					<Route path="/pose">
+						<Pose />
+					</Route>
+					<Route path="/voice">
+						<TongueSlip />
+					</Route>
+					<Route path="/">
+						<Main />
+					</Route>
+				</Switch>
+			</Wrapper>
+		</Router>
   )
 }
 

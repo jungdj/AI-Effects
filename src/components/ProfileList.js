@@ -144,10 +144,10 @@ const ProfileList = ({ selectProfile, loading}) => {
 				<ul className="choose-profile">
 					{
 						[
-							{ name: '윤아', key: 'ssul', },
-							{ name: '병서', key: 'gogi', },
-							{ name: '동진', key: 'dj', },
-							{ name: '윤서', key: 'yuns', },
+							{ name: 'Seol', key: 'ssul', },
+							{ name: 'Gogi', key: 'gogi', },
+							{ name: 'Dongjin', key: 'dj', },
+							{ name: 'Yuns', key: 'yuns', },
 						].map(({ name, key }) => (
 							<li className="profile">
 								<div>

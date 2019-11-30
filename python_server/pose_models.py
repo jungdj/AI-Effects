@@ -24,7 +24,7 @@ class VideoCamera(object):
 
 
 class BodyDetect():
-    def __init__(self, reference = None, video_path = None, model = 'mobilenet_thin', resolution='480x720', showBG=''):
+    def __init__(self, video_path = None, model = 'mobilenet_thin', resolution='432x368', showBG=''):
         # model : 'cmu / mobilenet_thin / mobilenet_v2_large / mobilenet_v2_small'
         # resoultion : 'network input resolution. default=432x368'
         # showBG : 'Use it with any non-empty string to show skeleton only.'
@@ -37,7 +37,7 @@ class BodyDetect():
         self.showBG = showBG
         self.time_checker = 0.0
         self.best_score = float("inf") # lower is better, always positive
-        self.reference = reference # human object.
+        self.reference = None # human object.
         self.last_frame = None
 
     def __del__(self):

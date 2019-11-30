@@ -2,10 +2,12 @@
 # -*- coding:utf-8 -*-
 import os
 import sys
-# <<<<<<< HEAD
 import json
 import face_models
 import blur_utils
+import pose_models
+import pose_utils
+import time
 from werkzeug.utils import secure_filename
 from datetime import date, datetime, timedelta
 from flask import (
@@ -19,14 +21,9 @@ from flask import (
     render_template,
     send_from_directory,
     flash,
+    after_this_request
 )
 from flask_cors import CORS
-# =======
-# import face_models
-import pose_models
-import pose_utils
-# from flask import Flask, render_template, Response
-# >>>>>>> pose_detect
 from flask_restful import Resource, Api, reqparse
 from config import (
     basedir,
@@ -35,6 +32,7 @@ from config import (
     ADDR,
     UPLOAD_FOLDER,
     UPLOAD_SPEECH_FOLDER,
+    UPLOAD_POSE_FOLDER,
 )
 from moviepy.editor import VideoFileClip
 from speechToText import (
@@ -55,6 +53,8 @@ if not os.path.isdir(UPLOAD_FOLDER):
 		os.mkdir(UPLOAD_FOLDER)
 if not os.path.isdir(UPLOAD_SPEECH_FOLDER):
 		os.mkdir(UPLOAD_SPEECH_FOLDER)
+if not os.path.isdir(UPLOAD_POSE_FOLDER):
+		os.mkdir(UPLOAD_POSE_FOLDER)
 
 app = Flask(__name__)
 CORS(app)
@@ -78,8 +78,6 @@ def gen(bt):
                b'Content-Type: image/jpeg\r\n\r\n' + jpg_bytes + b'\r\n\r\n')
         jpg_bytes = bt.get_jpg_bytes()
 
-# <<<<<<< HEAD
-
 @app.route('/video_feed/<path:filename>')
 def video_feed(filename):
     tolerance = 0.5
@@ -87,6 +85,14 @@ def video_feed(filename):
     filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     fr = face_models.FaceRecog(filepath, tolerance)
     return Response(gen(fr),
+                    mimetype='multipart/x-mixed-replace; boundary=frame')
+
+# Pose detect Webcam function
+@app.route('/video_feed/pose/<path:filename>')
+def video_feed_pose(filename):
+    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    pd = pose_models.BodyDetect(video_path=filepath)
+    return Response(gen(pd),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
 @app.route('/upload/<path:filename>')
@@ -98,6 +104,7 @@ def blur_faces(filename):
     filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     blur_utils.blurOtherFaces(filepath, os.path.join(app.config['UPLOAD_FOLDER'], 'blur_' + filename))
     return send_from_directory(app.config['UPLOAD_FOLDER'],'blur_'+filename, as_attachment=True)
+
 
 class Upload(Resource):
     def post(self):
@@ -192,10 +199,63 @@ class SpeechToText(Resource):
 
         return 'hello...?'
 
+# input : One video
+# output : One video with skeleton
+@app.route('/add_pose_skeleton', methods = ['POST'])
+def add_pose_skeleton():
+    if 'file' not in request.files:
+        flash('No file part')
+        return redirect(request.url)
+
+    file = request.files['file']
+    if file.filename == '':
+        flash('No selected file')
+        return redirect(request.url)
+
+    if file:
+        ts=time.time()
+        ts=str(int(ts))
+        temp_dir = os.path.join(UPLOAD_POSE_FOLDER, ts)
+        if os.path.isdir(temp_dir):
+            flash("There are too many requests. Please run it again in a moment.")
+            return "Multiple request at same time error"
+        os.mkdir(temp_dir)
+
+        filename = secure_filename(file.filename)
+        filepath = os.path.join(temp_dir, filename)
+        file.save(filepath)
+
+        # get only filename without extension
+        file_without_ext = os.path.splitext(filename)[0]
+        ext = os.path.splitext(filename)[1]
+        output_name = file_without_ext + "_with_pose" + ext
+        output_path = os.path.join(temp_dir, output_name)
+
+        pose_utils.detectAllPoses(filepath, output_path)
+
+        @after_this_request
+        def delete_temp_files(response):
+            os.remove(filepath)
+            os.remove(output_path)
+            os.rmdir(temp_dir)
+            return response
+
+        return send_from_directory(directory=temp_dir, filename=output_name)
+
+    return 'PANIC cannot reach here'
+
+# input : two video
+# output : Merged One video (skeleton or not)
+class PoseDetectMerge(Resource):
+    def get(self):
+        return 'get request'
+
+    def post(self):
+        return 'post request'
+
 api.add_resource(SpeechToText, "/video_crop")
 api.add_resource(Upload, "/upload")
 api.add_resource(Knowns, "/upload/knowns")
-
 
 if __name__ == '__main__':
     # ip_address = utils.get_ip_address()

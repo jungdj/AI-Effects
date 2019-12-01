@@ -60,7 +60,7 @@ if not os.path.isdir(UPLOAD_POSE_FOLDER):
 
 app = Flask(__name__)
 CORS(app)
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+UPLOAD_FOLDER = UPLOAD_FOLDER
 
 CORS(app)
 
@@ -84,7 +84,7 @@ def gen(bt):
 def video_feed(filename):
     tolerance = 0.5
     # fr = face_models.faceDetectBlur()
-    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    filepath = os.path.join(UPLOAD_FOLDER, filename)
     fr = face_models.FaceRecog(filepath, tolerance)
     return Response(gen(fr),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
@@ -92,25 +92,25 @@ def video_feed(filename):
 # Pose detect Webcam function
 @app.route('/video_feed/pose/<path:filename>')
 def video_feed_pose(filename):
-    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    filepath = os.path.join(UPLOAD_FOLDER, filename)
     pd = pose_models.BodyDetect(video_path=filepath)
     return Response(gen(pd),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
 @app.route('/upload/<path:filename>')
 def download_file(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'],filename, as_attachment=True)
+    return send_from_directory(UPLOAD_FOLDER,filename, as_attachment=True)
 
 @app.route('/blur/<path:filename>')
 def blur_faces(filename):
-    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-    blur_utils.blurOtherFaces(filepath, os.path.join(app.config['UPLOAD_FOLDER'], 'blur_' + filename))
-    return send_from_directory(app.config['UPLOAD_FOLDER'],'blur_'+filename, as_attachment=True)
+    filepath = os.path.join(UPLOAD_FOLDER, filename)
+    blur_utils.blurOtherFaces(filepath, os.path.join(UPLOAD_FOLDER, 'blur_' + filename))
+    return send_from_directory(UPLOAD_FOLDER,'blur_'+filename, as_attachment=True)
 
 @app.route('/extract_faces/<path:filename>')
 def extract_faces(filename):
     epf = ExtractPeopleFaces()
-    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    filepath = os.path.join(UPLOAD_FOLDER, filename)
     epf.encode(filepath, 1)
     epf.cluster()
     return 'extract done'
@@ -128,7 +128,7 @@ class Upload(Resource):
 
         if file:
             filename = secure_filename(file.filename)
-            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            filepath = os.path.join(UPLOAD_FOLDER, filename)
             file.save(filepath)
             return filename
         return redirect(request.url)
@@ -146,7 +146,7 @@ class Knowns(Resource):
             if f.filename == '':
                 flash('No selected file')
                 return redirect(request.url)
-            f.save(os.path.join(app.config['UPLOAD_FOLDER'], 'knowns', f.filename))
+            f.save(os.path.join(UPLOAD_FOLDER, 'knowns', f.filename))
         
         return 'upload complete'
     def get(self):
@@ -157,33 +157,17 @@ class SpeechToText(Resource):
     def post(self):
         return 'get request'
     
-    def post(self):
-        if 'file' not in request.files:
-            flash('No file part')
-            return redirect(request.url)
-        
-        file = request.files['file']
-        if file.filename == '':
-            flash('No selected file')
-            return redirect(request.url)
-        
-        if file:
-            fname = file.filename
-            only_fname = os.path.splitext(fname)
-            extension = only_fname[1]
-            only_fname = only_fname[0]
-
-            filename = secure_filename(only_fname + '-' + str(datetime.now()) + extension)
-            filepath = os.path.join(UPLOAD_SPEECH_FOLDER, filename)
-            file.save(filepath)
-        
+    def get(self, filename):
+        file_path = os.path.join(UPLOAD_SPEECH_FOLDER, filename)
         # get only filename without extension
         filename = os.path.splitext(filename)[0]
         audio_name = filename + '.wav'
+        merge_video_name = filename + '_merge.mp4'
         subtitle_video_name = filename + '_subtitle.mp4'
 
-        video_path = filepath
+        video_path = file_path
         audio_path = os.path.join(UPLOAD_SPEECH_FOLDER, audio_name)
+        merge_video_path = os.path.join(UPLOAD_SPEECH_FOLDER, merge_video_name)
         subtitle_video_path = os.path.join(UPLOAD_SPEECH_FOLDER, subtitle_video_name)
 
         videoToAudio(video_path, audio_path)
@@ -192,21 +176,22 @@ class SpeechToText(Resource):
         cutting_list = find_words(words_list)
         # cutting_list = find_youknow(words_list)
 
-        merge_video = None
+        final_video_path = None
         new_words_list = None
 
         if (len(cutting_list) == 0):
-            merge_video = VideoFileClip(video_path)
+            final_video_path = video_path
             print("Nothing to cut!")
             new_words_list = words_list
         else:
-            merge_video = mergeVideos(video_path, cutting_list)
+            final_video_path = merge_video_path
+            mergeVideos(video_path, merge_video_path, cutting_list)
             # need mergeVideo's each text word (start, end) time
             new_words_list = newWordList(words_list, cutting_list)
 
-        addSubtitles(merge_video, subtitle_video_path, new_words_list)
+        addSubtitles(final_video_path, subtitle_video_path, new_words_list)
 
-        return 'hello...?'
+        return 'get /video_crop'
 
 # input : One video
 # output : video with skeleton
@@ -312,7 +297,7 @@ def merge():
 
         return 'PANIC cannot reach here'
 
-api.add_resource(SpeechToText, "/video_crop")
+api.add_resource(SpeechToText, "/video_crop/<path:filename>")
 api.add_resource(Upload, "/upload")
 api.add_resource(Knowns, "/upload/knowns")
 

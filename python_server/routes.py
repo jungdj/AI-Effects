@@ -6,8 +6,8 @@ import glob
 import json
 import face_models
 import blur_utils
-# import pose_models
-# import pose_utils
+import pose_models
+import pose_utils
 import face_clustering
 import time
 from werkzeug.utils import secure_filename
@@ -107,11 +107,12 @@ def get_results(filename):
 def blur_faces(filename):
     video_name, ext = os.path.splitext(filename)
     blur_video_path = os.path.join(RESULT_FOLDER, video_name, video_name + '_blur' + ext)
+    ret_path = "results/" + video_name + "/" + video_name + '_blur' + ext
     if os.path.exists(blur_video_path):
-        return blur_video_path
+        return ret_path
     input_path = os.path.join(UPLOAD_FOLDER, filename)
     blur_utils.blurOtherFaces(input_path, blur_video_path)
-    return blur_video_path
+    return ret_path
 
 @app.route('/extract_faces/<path:filename>')
 def extract_faces(filename):
@@ -144,9 +145,10 @@ class GetPeopleimg(Resource):
         # 사진의 파일명
         # images are all 'jpg' extension
         files = []
+        ret_path = "results/" + only_filename + "/people/"
         for f in (glob.glob(file_path + "/*.jpg")):
             if os.path.basename(f) != 'ID-1.jpg':
-                files.append(f)
+                files.append(ret_path + os.path.basename(f))
         
         return files
 

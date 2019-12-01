@@ -126,17 +126,17 @@ const PWTWrapper = styled.div`
 		width: 100%;
 		height: 100%;
 		.item {
+			flex: 1 0 100%;
+			height: 100%;
 			&.inactive {
 				order: 1;
-				flex: 1 0 100%;
-				height: 100%;
 				visibility: hidden;
 			}
 			&.active {
 				order: 0;
-				flex: 1 0 100%;
-				height: 100%;
-				visibility: visible;
+			}
+			&.merged {
+				flex: 1 0 50%;
 			}
 		}
 	}
@@ -147,6 +147,7 @@ const PaneWithTabs = ({ tabs, cur, tabAction, uploadCb }) => {
 		<PWTWrapper>
 			<div className="tabs">
 				{tabs.map((tab, i) => (
+					(i > 1 && tabs[i-1].merged) ? null :
 					<div className={`tab ${i == cur ? 'active' : 'inactive'}`} key={tab.name}
 							 onClick={e => {
 							 	tabAction({ type: 'activate', value: i })
@@ -161,14 +162,15 @@ const PaneWithTabs = ({ tabs, cur, tabAction, uploadCb }) => {
 							e.stopPropagation();
 						}}/> : null}
 					</div>
-				))}
+				)
+				)}
 			</div>
 			<div className="pane">
 				{tabs.map((tab, i) => {
 					const Component = tabs[i].component;
 					return (
-						<div className={`item ${i == cur ? 'active' : 'inactive'}`} key={tab.name}>
-							<Component {...tabs[i]} cb={uploadCb} />
+						<div className={`item ${(i == cur || (i > 1 && i-1 == cur && tabs[i-1].merged)) ? 'active' : 'inactive'} ${(tabs[i].merged || (i > 1 && tabs[i-1].merged)) ? 'merged' : ''}`} key={tab.name}>
+							<Component {...tabs[i]} cb={uploadCb} tabAction={tabAction} />
 						</div>
 					)
 				})}
@@ -185,7 +187,13 @@ const Dashboard = () => {
 		switch (action.type) {
 			case 'push':
 				if (state.tabs.find(x => x.name === action.value.name) != null) return state;
-				return { tabs: [...state.tabs, action.value], cur: state.tabs.length };
+				const newCur = state.tabs[state.cur].merged ? state.cur : state.tabs.length
+				return { tabs: [...state.tabs, action.value], cur: newCur };
+			case 'split':
+				const cur2 = state.tabs[state.cur];
+				cur2.merged = true;
+				state.tabs[state.cur] = cur2;
+				return { ...state, tabs: [...state.tabs] }
 			case 'delete':
 				state.tabs.splice(action.value, 1)
 				state.cur = (state.cur + 1) % state.tabs.length

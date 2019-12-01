@@ -120,8 +120,21 @@ def extract_faces(filename):
     epf = face_clustering.ExtractPeopleFaces(filepath)
     epf.encode(2)
     epf.cluster()
-    return redirect("/get_people_img/"+filename)
 
+    only_filename = os.path.splitext(filename)[0]
+    people_dir = os.path.join(RESULT_FOLDER, only_filename, 'people')
+
+    if not os.path.isdir(people_dir):
+        flash('No such directory exists')
+        return 'error'
+
+    files = []
+    ret_path = "results/" + only_filename + "/people/"
+    for f in (glob.glob(people_dir + "/*.jpg")):
+        if os.path.basename(f) != 'ID-1.jpg':
+            files.append(ret_path + os.path.basename(f))
+    
+    return jsonify(files)
 
 class GetUploadfiles(Resource):
     def get(self):

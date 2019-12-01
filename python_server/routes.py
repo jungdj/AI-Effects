@@ -6,8 +6,8 @@ import glob
 import json
 import face_models
 import blur_utils
-# import pose_models
-# import pose_utils
+import pose_models
+import pose_utils
 import face_clustering
 import time
 from werkzeug.utils import secure_filename

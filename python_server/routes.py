@@ -7,7 +7,7 @@ import face_models
 import blur_utils
 import pose_models
 import pose_utils
-import faces_clustering
+import face_clustering
 import time
 from werkzeug.utils import secure_filename
 from datetime import date, datetime, timedelta

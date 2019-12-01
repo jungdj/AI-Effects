@@ -28,3 +28,4 @@ speech-to-text-credential.json
 **/__pycache__
 /python_server/venv
 /python_server/media
+/python_server/results

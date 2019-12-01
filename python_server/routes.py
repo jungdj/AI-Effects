@@ -6,8 +6,8 @@ import glob
 import json
 import face_models
 import blur_utils
-import pose_models
-import pose_utils
+# import pose_models
+# import pose_utils
 import face_clustering
 import time
 from werkzeug.utils import secure_filename
@@ -95,9 +95,13 @@ def video_feed_pose(filename):
     return Response(gen(pd),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
-@app.route('/upload/<path:filename>')
-def download_file(filename):
+@app.route('/uploads/<path:filename>')
+def get_uploads(filename):
     return send_from_directory(UPLOAD_FOLDER,filename, as_attachment=True)
+
+@app.route('/results/<path:filename>')
+def get_results(filename):
+    return send_from_directory(RESULT_FOLDER,filename, as_attachment=True)
 
 @app.route('/blur/<path:filename>')
 def blur_faces(filename):
@@ -112,10 +116,10 @@ def blur_faces(filename):
 @app.route('/extract_faces/<path:filename>')
 def extract_faces(filename):
     filepath = os.path.join(UPLOAD_FOLDER, filename)
-    epf = face_clustering.ExtractPeopleFaces(filename)
-    epf.encode(10)
+    epf = face_clustering.ExtractPeopleFaces(filepath)
+    epf.encode(2)
     epf.cluster()
-    return 'extract done'
+    return redirect("/get_people_img/"+filename)
 
 
 class GetUploadfiles(Resource):
@@ -141,8 +145,8 @@ class GetPeopleimg(Resource):
         # images are all 'jpg' extension
         files = []
         for f in (glob.glob(file_path + "/*.jpg")):
-            files.append(f)
-            # files.append([f, os.path.basename(f)])
+            if os.path.basename(f) != 'ID-1.jpg':
+                files.append(f)
         
         return files
 

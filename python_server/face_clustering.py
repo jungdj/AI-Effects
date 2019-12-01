@@ -4,7 +4,6 @@ import cv2
 from sklearn.cluster import DBSCAN
 import numpy as np
 import os
-import signal
 
 class Face():
     def __init__(self, frame_id, name, box, encoding):
@@ -18,17 +17,16 @@ class ExtractPeopleFaces():
         self.faces = []
         self.run_encoding = False
         self.src_file = src_file
-        
-        name, ext = os.path.splitext(src_file)
-        self.capture_dir = os.path.join(name, "captures")
-        self.people_dir = os.path.join(name, "people")
+        filename = os.path.basename(src_file)
+        name, ext = os.path.splitext(filename)
+        self.video_dir = os.path.join('results', name)
+        if not os.path.exists(self.video_dir):
+            os.mkdir(self.video_dir)
+        self.capture_dir = os.path.join(self.video_dir, "captures")
+        self.people_dir = os.path.join(self.video_dir, "people")
 
     def capture_filename(self, frame_id):
         return "frame_%08d.jpg" % frame_id
-
-    def signal_handler(self, sig, frame):
-        print(" stop encoding.")
-        self.run_encoding = False
 
     def getFaceImage(self, image, box):
         img_height, img_width = image.shape[:2]
@@ -56,10 +54,6 @@ class ExtractPeopleFaces():
         print(" - capture every %d frame" % frames_between_capture)
         if stop_at_frame > 0:
             print(" - stop after %d frame" % stop_at_frame)
-
-        # set SIGINT (^C) handler
-        prev_handler = signal.signal(signal.SIGINT, self.signal_handler)
-        print("press ^C to stop encoding immediately")
 
         if not os.path.exists(self.capture_dir):
             os.mkdir(self.capture_dir)
@@ -97,8 +91,6 @@ class ExtractPeopleFaces():
             cv2.imwrite(pathname, frame)
             self.faces.extend(faces_in_frame)
 
-        # restore SIGINT (^C) handler
-        signal.signal(signal.SIGINT, prev_handler)
         self.run_encoding = False
         src.release()
         return
@@ -119,35 +111,21 @@ class ExtractPeopleFaces():
         label_ids = np.unique(clt.labels_)
         num_unique_faces = len(np.where(label_ids > -1)[0])
         print("clustered %d unique faces." % num_unique_faces)
-
-        os.system("rm -rf ID*")
+        
+        os.system("rm -rf " + self.video_dir + "/ID*")
         if not os.path.exists(self.people_dir):
             os.mkdir(self.people_dir)
 
         for label_id in label_ids:
             dir_name = "ID%d" % label_id
-            os.mkdir(dir_name)
+            os.mkdir(os.path.join(self.video_dir, dir_name))
 
             # find all indexes of label_id
             indexes = np.where(clt.labels_ == label_id)[0]
+            indexes = np.random.choice(indexes, size=min(4, len(indexes)), replace=False)
 
             # save face images
-            for i in indexes:
-                frame_id = self.faces[i].frame_id
-                box = self.faces[i].box
-                (top, right, bottom, left) = box
-
-                pathname = os.path.join(self.capture_dir,
-                                        self.capture_filename(frame_id))
-                image = cv2.imread(pathname)
-                face_image = self.getFaceImage(image, box)
-
-                filename = dir_name + "-" + self.capture_filename(frame_id)
-                pathname = os.path.join(dir_name, filename)
-                cv2.imwrite(pathname, face_image)
-            
             faces = []
-            indexes = np.random.choice(indexes, size=min(4, len(indexes)), replace=False)
             for i in indexes:
                 frame_id = self.faces[i].frame_id
                 box = self.faces[i].box
@@ -156,8 +134,12 @@ class ExtractPeopleFaces():
                 pathname = os.path.join(self.capture_dir,
                                         self.capture_filename(frame_id))
                 image = cv2.imread(pathname)
-                face_image = image[top:bottom, left:right]
-                faces.append(face_image)
+                faces.append(image[top:bottom, left:right])
+                face_image = self.getFaceImage(image, box)
+                
+                filename = dir_name + "-" + self.capture_filename(frame_id)
+                pathname = os.path.join(self.video_dir, dir_name, filename)
+                cv2.imwrite(pathname, face_image)
 
             montage = build_montages(faces, (96, 96), (2, 2))[0]
             filename = os.path.join(self.people_dir, dir_name + '.jpg')
@@ -168,6 +150,6 @@ class ExtractPeopleFaces():
         print('clustering done')
         
 
-# epf = ExtractPeopleFaces("uploads/sample.mov")
-# epf.encode(1)
+# epf = ExtractPeopleFaces("uploads/yunayoona.mov")
+# epf.encode(10)
 # epf.cluster()

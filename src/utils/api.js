@@ -8,3 +8,6 @@ import {
 export const getPeople = formData => Promise.resolve (knowns_mock);
 export const getSubtitles = formData => Promise.resolve (subtitle_mock);
 export const getUploaded = () => Promise.resolve (uploaded_mock);
+
+
+export const uploadVideo = formData => axios.post('/upload', formData)

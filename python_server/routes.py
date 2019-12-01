@@ -105,10 +105,11 @@ def get_results(filename):
 
 class BlurFaces(Resource):
     def post(self, filename):
-        knowns = [] if request['knowns'] == '' else request['knowns'].split(',')  
+
+        knowns = [] if request.form['knowns'] == '' else request.form['knowns'].split(',')
         video_name, ext = os.path.splitext(filename)
-        blur_video_path = os.path.join(RESULT_FOLDER, video_name, video_name + '_blur' + ext)
-        ret_path = "/results/" + video_name + "/" + video_name + '_blur' + ext
+        blur_video_path = os.path.join(RESULT_FOLDER, video_name, video_name + '_blur_' + '_'.join(knowns) + ext)
+        ret_path = "/results/" + video_name + "/" + video_name + '_blur_' + '_'.join(knowns) + ext
         if os.path.exists(blur_video_path):
             return ret_path
         input_path = os.path.join(UPLOAD_FOLDER, filename)

@@ -8,7 +8,7 @@ import usePromise from "../hooks/usePromise"
 import Spinner from "./Spinner"
 
 import mp4 from '../static/icons/FileIcon_MP4.png'
-import Preview from "./Dashboard/Preview"
+import VideoEdit from "./Dashboard/VideoEdit"
 import { getSrcUrl } from "../variables"
 
 const Wrapper = styled.div`
@@ -51,14 +51,14 @@ const UploadedVideos = (props) => {
 	else if (!resolved) body = <div>Nothing to show</div>
 	else {
 		body =
-			resolved.map(name => {
+			resolved.map(fileName => {
 				return (
 					<TR onClick={() => {
-						props.tabAction({ type: 'push', value: { name, type: 'uploaded', fileName: name, component: <Preview previewUrl={getSrcUrl(`/uploads/${name}`)}></Preview> }})
+						props.tabAction({ type: 'push', value: { name: fileName, type: 'uploaded', fileName: fileName, component: VideoEdit }})
 					}}>
 						<TD>
 							<img src={mp4} alt="" />
-							{name}
+							{fileName}
 						</TD>
 					</TR>
 				)

@@ -13,7 +13,7 @@ class Axios {
 		this.session = axios.create ({
 			headers: {
 			},
-			timeout: 30000,
+			timeout: 300000,
 			baseURL: `${HOST}/`,
 		})
 	}

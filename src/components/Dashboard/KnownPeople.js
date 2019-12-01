@@ -7,6 +7,7 @@ import { getPeople } from "../../utils/api"
 
 import Spinner from "../Spinner"
 import { SectionWithTitle, Center } from "../../utils/mixins"
+import { getSrcUrl } from "../../variables"
 
 const Wrapper = styled.div`
 	${SectionWithTitle};
@@ -25,6 +26,13 @@ const HorScroller = styled.div`
 		height: 100px;
 		margin-right: 10px;
 		margin-bottom: 10px;
+		&.known {
+			border: 5px solid rgb(144,144,144);
+		}
+		&:hover {
+			cursor: pointer;
+			border: 5px solid #8f8f8f;
+		}
   	
 		img {
 			width: 100px;
@@ -36,8 +44,18 @@ const HorScroller = styled.div`
 
 const KnownPeople = (props) => {
 	const key = props.data.fileName
+	const knowns = props.data.knowns || []
+	console.log("known people", knowns)
+
+	const toggle = (name) => {
+		console.log('toggle', name);
+		props.tabAction({
+			type: 'knowns',
+			value: name
+		})
+	}
+
 	const getPeopleIfFile = async () => {
-		console.log('getPeopleIfFile', key)
 		if (key) return getPeople (key);
 		return null;
 	}
@@ -52,16 +70,20 @@ const KnownPeople = (props) => {
 	}
 	else if (!resolved) body = <div>Nothing to show</div>
 	else {
-		//body =
-		//	<HorScroller>
-		//		{resolved.map(src => {
-		//			return (
-		//				<div className="item">
-		//					<img src={src} key={src} />
-		//				</div>
-		//			)
-		//		})}
-		//	</HorScroller>
+		body =
+			<HorScroller>
+				{resolved.data.map(src => {
+					const srcNames = src.split('/')
+					const srcName = srcNames[srcNames.length - 1].split('.')[0];
+					const known = knowns.find(x => x === srcName);
+
+					return (
+						<div className={`item ${known ? 'known' : ''}`} onClick={() => toggle(srcName)}>
+							<img src={`${getSrcUrl (src)}`} key={src} />
+						</div>
+					)
+				})}
+			</HorScroller>
 	}
 
 	return (

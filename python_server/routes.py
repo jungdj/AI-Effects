@@ -7,6 +7,7 @@ import face_models
 import blur_utils
 import pose_models
 import pose_utils
+import faces_clustering
 import time
 from werkzeug.utils import secure_filename
 from datetime import date, datetime, timedelta
@@ -106,6 +107,13 @@ def blur_faces(filename):
     blur_utils.blurOtherFaces(filepath, os.path.join(app.config['UPLOAD_FOLDER'], 'blur_' + filename))
     return send_from_directory(app.config['UPLOAD_FOLDER'],'blur_'+filename, as_attachment=True)
 
+@app.route('/extract_faces/<path:filename>')
+def extract_faces(filename):
+    epf = ExtractPeopleFaces()
+    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    epf.encode(filepath, 1)
+    epf.cluster()
+    return 'extract done'
 
 class Upload(Resource):
     def post(self):

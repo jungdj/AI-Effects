@@ -8,6 +8,8 @@ import usePromise from "../hooks/usePromise"
 import Spinner from "./Spinner"
 
 import mp4 from '../static/icons/FileIcon_MP4.png'
+import Preview from "./Dashboard/Preview"
+import { getSrcUrl } from "../variables"
 
 const Wrapper = styled.div`
 	${SectionWithTitle};
@@ -37,10 +39,9 @@ const TD = styled(BaseTD)`
 	}
 `
 
-const UploadedVideos = () => {
-	const key = 'tmp'
-	const [loading, resolved, error] = usePromise (getUploaded, [key])
-
+const UploadedVideos = (props) => {
+	const [loading, resolved, error] = usePromise (getUploaded, [props.tick])
+	console.log('render UploadedVideos');
 	let body = null
 	if (loading) body = <Spinner />
 	else if (error) {
@@ -52,7 +53,9 @@ const UploadedVideos = () => {
 		body =
 			resolved.map(name => {
 				return (
-					<TR>
+					<TR onClick={() => {
+						props.tabAction({ type: 'push', value: { name, type: 'uploaded', fileName: name, component: <Preview previewUrl={getSrcUrl(`/uploads/${name}`)}></Preview> }})
+					}}>
 						<TD>
 							<img src={mp4} alt="" />
 							{name}

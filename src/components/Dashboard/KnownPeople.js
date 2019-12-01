@@ -33,9 +33,17 @@ const HorScroller = styled.div`
 	}
 `
 
-const KnownPeople = () => {
-	const key = 'tmp'
-	const [loading, resolved, error] = usePromise (getPeople, [key])
+
+const KnownPeople = (props) => {
+	const key = props.data.fileName
+	const getPeopleIfFile = async () => {
+		console.log('getPeopleIfFile', key)
+		if (key) return getPeople (key);
+		return null;
+	}
+	const [loading, resolved, error] = usePromise (getPeopleIfFile, [key])
+	console.log({ resolved })
+
 	let body = null
 	if (loading) body = <Center><Spinner.inline /></Center>
 	else if (error) {
@@ -44,16 +52,16 @@ const KnownPeople = () => {
 	}
 	else if (!resolved) body = <div>Nothing to show</div>
 	else {
-		body =
-			<HorScroller>
-				{resolved.map(src => {
-					return (
-						<div className="item">
-							<img src={src} key={src} />
-						</div>
-					)
-				})}
-			</HorScroller>
+		//body =
+		//	<HorScroller>
+		//		{resolved.map(src => {
+		//			return (
+		//				<div className="item">
+		//					<img src={src} key={src} />
+		//				</div>
+		//			)
+		//		})}
+		//	</HorScroller>
 	}
 
 	return (

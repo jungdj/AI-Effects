@@ -95,9 +95,13 @@ def video_feed_pose(filename):
     return Response(gen(pd),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
-@app.route('/upload/<path:filename>')
-def download_file(filename):
+@app.route('/uploads/<path:filename>')
+def get_uploads(filename):
     return send_from_directory(UPLOAD_FOLDER,filename, as_attachment=True)
+
+@app.route('/results/<path:filename>')
+def get_results(filename):
+    return send_from_directory(RESULT_FOLDER,filename, as_attachment=True)
 
 @app.route('/blur/<path:filename>')
 def blur_faces(filename):

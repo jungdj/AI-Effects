@@ -28,7 +28,7 @@ googleapis-common-protos==1.6.0
 grpcio==1.25.0
 h5py==2.10.0
 idna==2.8
-imageio==2.6.1
+imageio==2.5.0
 imageio-ffmpeg==0.3.0
 imutils==0.5.3
 isort==4.3.21

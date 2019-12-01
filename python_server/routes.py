@@ -115,7 +115,7 @@ def extract_faces(filename):
     epf = face_clustering.ExtractPeopleFaces(filepath)
     epf.encode(2)
     epf.cluster()
-    return 'extract done'
+    return redirect("/get_people_img/"+filename)
 
 
 class GetUploadfiles(Resource):
@@ -141,8 +141,8 @@ class GetPeopleimg(Resource):
         # images are all 'jpg' extension
         files = []
         for f in (glob.glob(file_path + "/*.jpg")):
-            files.append(f)
-            # files.append([f, os.path.basename(f)])
+            if os.path.basename(f) != 'ID-1.jpg':
+                files.append(f)
         
         return files
 

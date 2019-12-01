@@ -127,7 +127,7 @@ class GetUploadfiles(Resource):
     def get(self):
         files = []
         for f in (glob.glob(UPLOAD_FOLDER + "/*.mp4"), glob.glob(UPLOAD_FOLDER + "/*.mov")):
-            files += os.path.basename(f[0])
+            files += os.path.basename(f)
             # print("names: ", os.path.basename(f[0]))
 
         return files

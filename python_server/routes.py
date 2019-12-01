@@ -6,8 +6,8 @@ import glob
 import json
 import face_models
 import blur_utils
-import pose_models
-import pose_utils
+# import pose_models
+# import pose_utils
 import face_clustering
 import time
 from werkzeug.utils import secure_filename
@@ -118,23 +118,23 @@ class BlurFaces(Resource):
 
 @app.route('/extract_faces/<path:filename>')
 def extract_faces(filename):
-    filepath = os.path.join(UPLOAD_FOLDER, filename)
-    epf = face_clustering.ExtractPeopleFaces(filepath)
-    epf.encode(2)
-    epf.cluster()
-
     only_filename = os.path.splitext(filename)[0]
     people_dir = os.path.join(RESULT_FOLDER, only_filename, 'people')
+
+    if not os.path.exists(people_dir + '/ID0.jpg'):
+        filepath = os.path.join(UPLOAD_FOLDER, filename)
+        epf = face_clustering.ExtractPeopleFaces(filepath)
+        epf.encode(2)
+        epf.cluster()
 
     if not os.path.isdir(people_dir):
         flash('No such directory exists')
         return 'error'
 
     files = []
-    ret_path = "/results/" + only_filename + "/people/"
     for f in (glob.glob(people_dir + "/*.jpg")):
         if os.path.basename(f) != 'ID-1.jpg':
-            files.append(ret_path + os.path.basename(f))
+            files.append("/results/" + only_filename + "/people/" + os.path.basename(f))
     
     return jsonify(files)
 

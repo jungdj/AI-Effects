@@ -261,10 +261,6 @@ class VideoStutter(Resource):
             new_words_list = newWordList(words_list, cutting_list)
 
         addSubtitles(final_video_path, subtitle_video_path, new_words_list)
-
-        for f in (glob.glob(people_dir + "/*.jpg")):
-        if os.path.basename(f) != 'ID-1.jpg':
-            files.append("/results/" + only_filename + "/people/" + os.path.basename(f))
         
         merge_video_path_name = os.path.join("/results", merge_video_name)
 

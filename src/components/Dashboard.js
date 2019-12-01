@@ -9,6 +9,8 @@ import KnownPeople from "./Dashboard/KnownPeople"
 import Features from "./Dashboard/Features"
 import UploadedVideos from "./UploadedVideos"
 
+import { mergeVideo } from "../utils/api"
+
 const Wrapper = styled.div`
 	width: 100vw;
 	height: 100vh;
@@ -170,7 +172,7 @@ const PaneWithTabs = ({ tabs, cur, tabAction, uploadCb }) => {
 					const Component = tabs[i].component;
 					return (
 						<div className={`item ${(i == cur || (i > 1 && i-1 == cur && tabs[i-1].merged)) ? 'active' : 'inactive'} ${(tabs[i].merged || (i > 1 && tabs[i-1].merged)) ? 'merged' : ''}`} key={tab.name}>
-							<Component {...tabs[i]} cb={uploadCb} tabAction={tabAction} />
+							<Component {...tabs[i]} cb={uploadCb} tabAction={tabAction} tabs={tabs} />
 						</div>
 					)
 				})}
@@ -193,6 +195,12 @@ const Dashboard = () => {
 				const cur2 = state.tabs[state.cur];
 				cur2.merged = true;
 				state.tabs[state.cur] = cur2;
+				return { ...state, tabs: [...state.tabs] }
+			case 'merged':
+				const cur3 = state.tabs[state.cur];
+				cur3.merged = false;
+				state.tabs[state.cur] = cur3;
+				state.tabs.splice (state.cur + 1, 1)
 				return { ...state, tabs: [...state.tabs] }
 			case 'delete':
 				state.tabs.splice(action.value, 1)
@@ -222,6 +230,7 @@ const Dashboard = () => {
 		],
 		cur: 0
 	})
+
 
 	const cur = tabData.tabs[tabData.cur]
 

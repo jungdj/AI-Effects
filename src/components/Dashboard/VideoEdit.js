@@ -4,9 +4,11 @@ import styled from 'styled-components';
 import Preview from "./Preview"
 import { getSrcUrl } from "../../variables"
 
-import { blurVideo, getPeople } from "../../utils/api"
+import { blurVideo, getPeople, mergeVideo } from "../../utils/api"
 
 import split from '../../static/icons/columns-solid.svg';
+import mergeIcon from '../../static/icons/call_merge-24px.svg'
+import Spinner from "../Spinner"
 
 const Wrapper = styled.div`
 	width: 100%;
@@ -57,11 +59,11 @@ const Blur = (props) => {
 		setLoading(false);
 	};
 
-	return <img
+	return <>{loading && <Spinner />}<img
 							onClick={process}
 							src='http://www.jigzone.com/p/jz/jzM/Mozaic_Face_5310.jpg'
 							className={`menu-item face-blur ${loading ? 'loading' : ''}`}
-						/>
+						/></>
 }
 
 const AddVideo = (props) => {
@@ -72,6 +74,34 @@ const AddVideo = (props) => {
 	}}/>
 }
 
+const MergeVideo = (props) => {
+	const { tabs, name } = props
+	const [loading, setLoading] = useState(false);
+	const [error, setError] = useState(null);
+
+	const process = props.blurSrc ? props.toggle : async () => {
+		setLoading(true);
+		try {
+			const index = tabs.findIndex(x => x.name === name);
+			const result = await mergeVideo(name, tabs[index+1].name);
+			props.setResolved (result.data);
+			props.tabAction({
+				type: 'merged'
+			})
+		} catch (e) {
+			setError(e);
+		}
+		setLoading(false);
+	};
+
+	return <>
+		{loading && <Spinner />}
+			<img
+			className={`menu-item ${loading ? 'loading' : ''}`}
+			src={mergeIcon} onClick={process} />
+		</>
+}
+
 const VideoEdit = (props) => {
 	console.log('video edit', props);
 	const { fileName } = props;
@@ -79,6 +109,7 @@ const VideoEdit = (props) => {
 
 	const [src, setSrc] = useState (defSrc)
 	const [blurSrc, setBlurSrc] = useState ('');
+	const [mergeSrc, setMergeSrc] = useState ('');
 
 	const toggle = useCallback (() => {
 		console.log(src)
@@ -86,12 +117,18 @@ const VideoEdit = (props) => {
 		else setSrc (defSrc)
 	}, [src, blurSrc])
 
+	const toggleMerge = useCallback (() => {
+		if (src != mergeSrc) setSrc (mergeSrc)
+		else setSrc (defSrc)
+	}, [src, mergeSrc])
+
 	return (
 		<Wrapper>
 			<Preview previewUrl={getSrcUrl(src)} />
 			<Menus>
 				<Blur fileName={fileName} setResolved={setBlurSrc} blurSrc={blurSrc} toggle={toggle} knowns={props.knowns}/>
 				{props.merged || <AddVideo {...props} />}
+				{(props.merged || mergeSrc) && <MergeVideo {...props} toggle={toggleMerge} mergeSrc={mergeSrc} setResolved={setMergeSrc} />}
 			</Menus>
 		</Wrapper>
 	)

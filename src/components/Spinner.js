@@ -13,6 +13,7 @@ const Spinner = styled.div`
 	bottom:0;
 	top:0;
 	animation:animasyon 2s linear infinite;
+	z-index: 1001;
 	
 	@keyframes animasyon{
 		from{transform: rotate(0deg)}

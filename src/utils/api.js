@@ -19,3 +19,9 @@ export const blurVideo = (fileName, ids) => {
 	return axios.post(`/blur/${fileName}`, formData)
 }
 export const uploadVideo = formData => axios.post('/upload', formData)
+export const mergeVideo = (first, second) => {
+	const formData = new FormData();
+	formData.append('first_filename', first)
+	formData.append('second_filename', second)
+	return axios.post('/merge', formData);
+}

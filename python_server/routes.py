@@ -137,7 +137,7 @@ class Upload(Resource):
             name, ext = os.path.splitext(filename)
             filepath = os.path.join(UPLOAD_FOLDER, filename)
             file.save(filepath)
-            filedir = os.path.join(basedir, name)
+            filedir = os.path.join(RESULT_FOLDER, name)
             if not os.path.isdir(filedir):
                 os.mkdir(filedir)
                 os.mkdir(filedir + '/people')
@@ -202,16 +202,14 @@ class VideoStutter(Resource):
         new_words_list = None
 
         if (len(cutting_list) == 0):
-            final_video_path = video_path
             print("Nothing to cut!")
             new_words_list = words_list
         else:
-            final_video_path = merge_video_path
             mergeVideos(video_path, merge_video_path, cutting_list)
             # need mergeVideo's each text word (start, end) time
             new_words_list = newWordList(words_list, cutting_list)
 
-        addSubtitles(final_video_path, subtitle_video_path, new_words_list)
+        addSubtitles(merge_video_path, subtitle_video_path, new_words_list)
 
         return merge_video_path
 

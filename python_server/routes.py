@@ -32,8 +32,6 @@ from config import (
     HTTP,
     ADDR,
     UPLOAD_FOLDER,
-    UPLOAD_SPEECH_FOLDER,
-    UPLOAD_POSE_FOLDER,
     SPEECHTOTEXT_SPEAKER_COUNT,
 )
 from moviepy.editor import VideoFileClip
@@ -53,10 +51,6 @@ from video_utils import (
 
 if not os.path.isdir(UPLOAD_FOLDER):
 		os.mkdir(UPLOAD_FOLDER)
-if not os.path.isdir(UPLOAD_SPEECH_FOLDER):
-		os.mkdir(UPLOAD_SPEECH_FOLDER)
-if not os.path.isdir(UPLOAD_POSE_FOLDER):
-		os.mkdir(UPLOAD_POSE_FOLDER)
 
 app = Flask(__name__)
 CORS(app)
@@ -128,9 +122,15 @@ class Upload(Resource):
 
         if file:
             filename = secure_filename(file.filename)
+            name, ext = os.path.splitext(filename)
             filepath = os.path.join(UPLOAD_FOLDER, filename)
             file.save(filepath)
-            return filename
+            filedir = os.path.join(basedir, name)
+            if not os.path.isdir(filedir):
+                os.mkdir(filedir)
+                os.mkdir(filedir + '/people')
+                os.mkdir(filedir +'/knowns')
+
         return redirect(request.url)
 
     def get(self):
@@ -138,6 +138,7 @@ class Upload(Resource):
 
 class Knowns(Resource):
     def post(self):
+        videoname = request.form['videoname']
         if 'file' not in request.files:
             flash('No file part')
             return redirect(request.url)

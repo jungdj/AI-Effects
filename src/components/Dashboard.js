@@ -1,4 +1,4 @@
-import React, { useReducer } from 'react';
+import React, { useState, useReducer, useCallback } from 'react';
 import styled from 'styled-components';
 
 import VideoInput from "./VideoInput"
@@ -121,6 +121,7 @@ const PWTWrapper = styled.div`
 		}
 	}
 	.pane {
+		display: flex;
 		position: relative;
 		width: 100%;
 		height: 100%;
@@ -174,10 +175,14 @@ const PaneWithTabs = ({ tabs, cur, tabAction }) => {
 }
 
 const Dashboard = () => {
+	const [tick, setTick] = useState(0);
+	const uploadCb = useCallback(() => { setTick (tick+1) }, [tick])
+
 	const [tabData, tabAction] = useReducer ((state, action) => {
 		switch (action.type) {
 			case 'push':
-				return { tabs: [...state.tabs, action.value], cur: state.cur + 1 }
+				if (state.tabs.find(x => x.name === action.value.name) != null) return state;
+				return { tabs: [...state.tabs, action.value], cur: state.tabs.length };
 			case 'delete':
 				state.tabs.splice(action.value, 1)
 				state.cur = (state.cur + 1) % state.tabs.length
@@ -188,15 +193,22 @@ const Dashboard = () => {
 			default:
 				return state;
 		}
-	}, { tabs: [{ name: 'Upload', type: 'upload', component: <VideoInput /> },
-			{ name: 'Upload 2 Name is Too Long, Upload 2 Name is Too Long, Upload 2 Name is Too Long, Upload 2 Name is Too Long, ', type: 'upload', component: <h1>sasf</h1> }], cur: 0 })
+	}, {
+		tabs: [
+			{ name: 'Upload', type: 'upload', fileName: '', component: <VideoInput cb={uploadCb} /> },
+			//{ name: 'Upload 2 Name is Too Long, Upload 2 Name is Too Long, Upload 2 Name is Too Long, Upload 2 Name is Too Long, ', type: 'upload', component: <h1>sasf</h1> }
+		],
+		cur: 0
+	})
+
+	const cur = tabData.tabs[tabData.cur]
 
 	return (
 		<Wrapper>
 			<Row1>
 				<section className="panel-1">
 					<section className="panel-1-1">
-						<UploadedVideos />
+						<UploadedVideos tabAction={tabAction} data={cur} tick={tick} />
 					</section>
 					<section className="panel-1-2">
 						<Features/>
@@ -207,7 +219,7 @@ const Dashboard = () => {
 				</section>
 				<section className="panel-3">
 					<section className="panel-3-1">
-						<KnownPeople/>
+						<KnownPeople data={cur} />
 					</section>
 					<section className="panel-3-2">
 						<Subtitles/>

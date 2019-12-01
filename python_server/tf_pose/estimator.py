@@ -491,7 +491,7 @@ class TfPoseEstimator:
             total_diff += diff
             part_count += 1
 
-        if part_count >= 10:
+        if part_count >= 8:
             return total_diff / part_count
         return float("inf")
 

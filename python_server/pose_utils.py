@@ -1,6 +1,9 @@
 import cv2
 import video_utils
 import pose_models
+import config
+import time
+import os
 
 # function for video -> video with skeleton
 def detectAllPoses(video_path, output_path):
@@ -11,20 +14,24 @@ def detectAllPoses(video_path, output_path):
 # video 1, video2 -> new video start with video 1 + sub video 2 so that it can be connected naturally
 # with skelton, we need much more time to process
 def TwoVideoProcess(video_path1, video_path2, output_path, with_skeleton=False):
-    temp_file = "media/temp.mp4"
+    video_name1, ext = os.path.splitext(os.path.basename(video_path1))
+    temp_name = str(int(time.time())) + ext
+    temp_path = os.path.join(config.UPLOAD_FOLDER, temp_name)
     bt = pose_models.BodyDetect()
 
     # get last frame of fisrt video.
-    video_utils.processVideo_get_clip(video_path1, temp_file,bt.get_last_frame)
+    video_utils.processVideo_get_clip(video_path1, temp_path,bt.get_last_frame)
     last_frame = bt.last_frame
     bt.reference = bt.frame_to_human(last_frame)
 
     # Merge two video. totally video 1 + (bt.time_checker ~ end) video 2
-    video_utils.processVideo_get_clip(video_path2, temp_file, bt.bodyDetectVideo_for_merge)
+    video_utils.processVideo_get_clip(video_path2, temp_path, bt.bodyDetectVideo_for_merge)
     # print(bt.time_checker, "is point for merge")
 
     # Just merge it
     video_utils.mergeVideos_with_time(video_path1, video_path2, bt.time_checker, output_path, with_skeleton, bt.bodyDetectVideo)
+    if os.path.isfile(temp_path):
+        os.remove(temp_path)
     return
 
 

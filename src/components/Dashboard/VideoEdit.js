@@ -6,6 +6,8 @@ import { getSrcUrl } from "../../variables"
 
 import { blurVideo, getPeople } from "../../utils/api"
 
+import split from '../../static/icons/columns-solid.svg';
+
 const Wrapper = styled.div`
 	width: 100%;
 	height: 100%;
@@ -17,14 +19,15 @@ const Wrapper = styled.div`
 const Menus = styled.div`
 	width: 100%;
 	justify-self: flex-end;
+	display: flex;
 	border-top: 1px solid rgb(8,8,8);
 	height: 60px;
 	padding: 6px 24px;
 	
-	.face-blur {
+	.menu-item {
 		box-sizing: content-box;
-		width: auto;
 		height: 100%;
+		width: auto;
 		&:hover {
 			cursor: pointer;
 			border: 1px solid #e5e5e5;
@@ -33,6 +36,9 @@ const Menus = styled.div`
 			opacity: 0.3;
 			border: 1px solid #e5e5e5;
 		}
+	}
+	img + img {
+		margin-left: 30px;
 	}
 `
 
@@ -54,8 +60,16 @@ const Blur = (props) => {
 	return <img
 							onClick={process}
 							src='http://www.jigzone.com/p/jz/jzM/Mozaic_Face_5310.jpg'
-							className={`face-blur ${loading ? 'loading' : ''}`}
+							className={`menu-item face-blur ${loading ? 'loading' : ''}`}
 						/>
+}
+
+const AddVideo = (props) => {
+	return <img className={'menu-item'} src={split} onClick={() => {
+		props.tabAction({
+			type: 'split'
+		})
+	}}/>
 }
 
 const VideoEdit = (props) => {
@@ -77,6 +91,7 @@ const VideoEdit = (props) => {
 			<Preview previewUrl={getSrcUrl(src)} />
 			<Menus>
 				<Blur fileName={fileName} setResolved={setBlurSrc} blurSrc={blurSrc} toggle={toggle} knowns={props.knowns}/>
+				{props.merged || <AddVideo {...props} />}
 			</Menus>
 		</Wrapper>
 	)

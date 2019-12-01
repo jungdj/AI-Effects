@@ -120,8 +120,30 @@ def extract_faces(filename):
 
 class GetUploadfiles(Resource):
     def get(self):
-        files = [f for f in (glob.glob(UPLOAD_FOLDER + "/*.mp4")) or (glob.glob(UPLOAD_FOLDER + "/*.mov"))]
+        files = []
+        for f in (glob.glob(UPLOAD_FOLDER + "/*.mp4"), glob.glob(UPLOAD_FOLDER + "/*.mov")):
+            files += f
+            # print("names: ", os.path.basename(f[0]))
 
+        return files
+
+class GetPeopleimg(Resource):
+    def get(self, filename):
+        only_filename = os.path.splitext(filename)[0]
+
+        file_path = os.path.join(RESULT_FOLDER, only_filename, 'people')
+
+        if not os.path.isdir(file_path):
+            flash('No such directory exists')
+            return 'error'
+
+        # 사진의 파일명
+        # images are all 'jpg' extension
+        files = []
+        for f in (glob.glob(file_path + "/*.jpg")):
+            files.append(f)
+            # files.append([f, os.path.basename(f)])
+        
         return files
 
 
@@ -340,6 +362,7 @@ api.add_resource(VideoStutter, "/video_stutter/<path:filename>")
 api.add_resource(VideoSubtitle, "/video_subtitle/<path:filename>")
 api.add_resource(VideoText, "/video_text/<path:filename>")
 api.add_resource(GetUploadfiles, "/get_upload")
+api.add_resource(GetPeopleimg, "/get_people_img/<path:filename>")
 api.add_resource(Upload, "/upload")
 api.add_resource(Knowns, "/upload/knowns")
 

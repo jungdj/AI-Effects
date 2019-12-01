@@ -13,7 +13,7 @@ class Face():
         self.box = box
         self.encoding = encoding
 
-class FaceClustering():
+class ExtractPeopleFaces():
     def __init__(self):
         self.faces = []
         self.run_encoding = False
@@ -165,6 +165,6 @@ class FaceClustering():
         print('clustering done')
         
 
-# fc = FaceClustering()
-# fc.encode("uploads/sample.mov", 1)
-# fc.cluster()
+# epf = ExtractPeopleFaces()
+# epf.encode("uploads/sample.mov", 1)
+# epf.cluster()

@@ -10,6 +10,4 @@ HTTP = os.getenv('ENV_HTTP', DEFAULT_HTTP)
 DEFAULT_ADDR = "127.0.0.1"
 ADDR = os.getenv('ENV_ADDR_API', DEFAULT_ADDR)
 UPLOAD_FOLDER = os.path.join(basedir, 'uploads')
-UPLOAD_SPEECH_FOLDER = os.path.join(UPLOAD_FOLDER, 'speech')
-UPLOAD_POSE_FOLDER = os.path.join(UPLOAD_FOLDER, 'pose')
 SPEECHTOTEXT_SPEAKER_COUNT = 3

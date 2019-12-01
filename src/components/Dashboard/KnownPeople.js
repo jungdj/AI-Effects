@@ -6,7 +6,7 @@ import usePromise from "../../hooks/usePromise"
 import { getPeople } from "../../utils/api"
 
 import Spinner from "../Spinner"
-import { SectionWithTitle } from "../../utils/mixins"
+import { SectionWithTitle, Center } from "../../utils/mixins"
 
 const Wrapper = styled.div`
 	${SectionWithTitle};
@@ -37,7 +37,7 @@ const KnownPeople = () => {
 	const key = 'tmp'
 	const [loading, resolved, error] = usePromise (getPeople, [key])
 	let body = null
-	if (loading) body = <Spinner />
+	if (loading) body = <Center><Spinner.inline /></Center>
 	else if (error) {
 		console.error(error);
 		body = <div>Error occured!</div>
@@ -55,6 +55,7 @@ const KnownPeople = () => {
 				})}
 			</HorScroller>
 	}
+
 	return (
 		<Wrapper>
 			<div className={'__section-title'}>Known People</div>

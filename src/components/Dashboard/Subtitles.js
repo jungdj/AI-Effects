@@ -6,7 +6,7 @@ import usePromise from "../../hooks/usePromise"
 import Spinner from "../Spinner"
 
 import { getSubtitles } from "../../utils/api"
-import { SectionWithTitle } from "../../utils/mixins"
+import { SectionWithTitle, Center } from "../../utils/mixins"
 
 import { Table, TR as BaseTR, TD } from "../../utils/mixins"
 

@@ -7,6 +7,7 @@ import close from '../static/icons/close-24px.svg';
 import Subtitles from "./Dashboard/Subtitles"
 import KnownPeople from "./Dashboard/KnownPeople"
 import Features from "./Dashboard/Features"
+import UploadedVideos from "./UploadedVideos"
 
 const Wrapper = styled.div`
 	width: 100vw;
@@ -14,9 +15,7 @@ const Wrapper = styled.div`
 	display: flex;
 	flex-direction: column;
 	background-color: rgb(35, 35, 35);
-	* {
-		color: white;
-	}
+	color: white;
 	section {
 		display: flex;
 	}
@@ -24,7 +23,7 @@ const Wrapper = styled.div`
 
 const Row1 = styled.section`
 	width: 100%;
-	height: 70vh;
+	height: 100vh;
 	section {
 		padding: 1px;
 	}
@@ -197,7 +196,7 @@ const Dashboard = () => {
 			<Row1>
 				<section className="panel-1">
 					<section className="panel-1-1">
-						<h1>Original Videos</h1>
+						<UploadedVideos />
 					</section>
 					<section className="panel-1-2">
 						<Features/>
@@ -215,14 +214,14 @@ const Dashboard = () => {
 					</section>
 				</section>
 			</Row1>
-			<Row2>
-				<section className="panel-1">
-					<h1>Generated Videos</h1>
-				</section>
-				<section className="panel-2">
-					<h1>Operations on Progress</h1>
-				</section>
-			</Row2>
+			{/*<Row2>*/}
+			{/*	<section className="panel-1">*/}
+			{/*		<h1>Generated Videos</h1>*/}
+			{/*	</section>*/}
+			{/*	<section className="panel-2">*/}
+			{/*		<h1>Operations on Progress</h1>*/}
+			{/*	</section>*/}
+			{/*</Row2>*/}
 		</Wrapper>
 	)
 }

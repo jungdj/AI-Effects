@@ -1,3 +1,3 @@
-pip install -r requirements.txt
-pip install --upgrade cython
-pip install -r requirements2.txt
+pip3 install -r requirements.txt
+pip3 install --upgrade cython
+pip3 install -r requirements2.txt

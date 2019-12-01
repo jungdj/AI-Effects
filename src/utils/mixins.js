@@ -60,6 +60,10 @@ Table.Body = styled.tbody`
 		font-size: 11px; 
 		flex: 0 0 20px;
 		border-bottom: 1px solid rgb(28,28,28);
+		&:hover {
+			background-color: rgb(37, 37, 37);
+			border: 1px solid rgb(43, 43, 43);
+		}
 	}
 `
 
@@ -73,4 +77,12 @@ export const TR = styled.tr`
 
 export const TD = styled.td`
 	padding: 2px 4px;
+`
+
+export const Center = styled.div`
+	display: flex;
+	width: 100%;
+	height: 100%;
+	justify-content: center;
+	align-items: center;
 `

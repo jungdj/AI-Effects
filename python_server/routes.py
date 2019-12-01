@@ -32,8 +32,6 @@ from config import (
     HTTP,
     ADDR,
     UPLOAD_FOLDER,
-    UPLOAD_SPEECH_FOLDER,
-    UPLOAD_POSE_FOLDER,
     SPEECHTOTEXT_SPEAKER_COUNT,
 )
 from moviepy.editor import VideoFileClip
@@ -52,11 +50,7 @@ from video_utils import (
 )
 
 if not os.path.isdir(UPLOAD_FOLDER):
-		os.mkdir(UPLOAD_FOLDER)
-if not os.path.isdir(UPLOAD_SPEECH_FOLDER):
-		os.mkdir(UPLOAD_SPEECH_FOLDER)
-if not os.path.isdir(UPLOAD_POSE_FOLDER):
-		os.mkdir(UPLOAD_POSE_FOLDER)
+    os.mkdir(UPLOAD_FOLDER)
 
 app = Flask(__name__)
 CORS(app)
@@ -153,22 +147,30 @@ class Knowns(Resource):
         return 'get /upload/knowns'
 
 
-class SpeechToText(Resource):
+class VideoStutter(Resource):
     def post(self):
         return 'get request'
     
     def get(self, filename):
-        file_path = os.path.join(UPLOAD_SPEECH_FOLDER, filename)
+        # return 'cropped' video path
         # get only filename without extension
-        filename = os.path.splitext(filename)[0]
-        audio_name = filename + '.wav'
-        merge_video_name = filename + '_merge.mp4'
-        subtitle_video_name = filename + '_subtitle.mp4'
+        # to prevent running speechToText 2 times for merge(crop for stuttering) + subtitle -> make two videos in one time!
+        only_filename = os.path.splitext(filename)[0]
 
-        video_path = file_path
-        audio_path = os.path.join(UPLOAD_SPEECH_FOLDER, audio_name)
-        merge_video_path = os.path.join(UPLOAD_SPEECH_FOLDER, merge_video_name)
-        subtitle_video_path = os.path.join(UPLOAD_SPEECH_FOLDER, subtitle_video_name)
+        file_path = os.path.join(UPLOAD_FOLDER, only_filename)
+
+        audio_name = only_filename + '_audio.wav'
+        merge_video_name = only_filename + '_merge_stutter.mp4'
+        subtitle_video_name = only_filename + '_subtitle.mp4'
+
+        video_path = os.path.join(file_path, filename)
+        audio_path = os.path.join(file_path, audio_name)
+        merge_video_path = os.path.join(file_path, merge_video_name)
+        subtitle_video_path = os.path.join(file_path, subtitle_video_name)
+
+        # if merge_stutter video already exist, just return the file
+        if os.path.isfile(merge_video_path):
+            return merge_video_path
 
         videoToAudio(video_path, audio_path)
 
@@ -191,7 +193,51 @@ class SpeechToText(Resource):
 
         addSubtitles(final_video_path, subtitle_video_path, new_words_list)
 
-        return 'get /video_crop'
+        return merge_video_path
+
+class VideoSubtitle(Resource):
+    def get(self, filename):
+        only_filename = os.path.splitext(filename)[0]
+
+        file_path = os.path.join(UPLOAD_FOLDER, only_filename)
+        
+        audio_name = only_filename + '_audio.wav'
+        subtitle_video_name = only_filename + '_subtitle.mp4'
+
+        video_path = os.path.join(file_path, filename)
+        audio_path = os.path.join(file_path, audio_name)
+        subtitle_video_path = os.path.join(file_path, subtitle_video_name)
+
+        if os.path.isfile(subtitle_video_path):
+            return subtitle_video_path
+        
+        # need to create new subtitle video
+
+        if not os.path.isfile(audio_path):
+            videoToAudio(video_path, audio_path)
+        
+        words_list = speech_to_text(audio_path, SPEECHTOTEXT_SPEAKER_COUNT)
+        addSubtitles(video_path, subtitle_video_path, words_list)
+
+        return subtitle_video_path
+
+class VideoText(Resource):
+    def get(self, filename):
+        # return word_text to frontend
+        only_filename = os.path.splitext(filename)[0]
+
+        file_path = os.path.join(UPLOAD_FOLDER, only_filename)
+        
+        audio_name = only_filename + '_audio.wav'
+
+        video_path = os.path.join(file_path, filename)
+        audio_path = os.path.join(file_path, audio_name)
+
+        if not os.path.isfile(audio_path):
+            videoToAudio(video_path, audio_path)
+        
+        words_list = speech_to_text(audio_path, SPEECHTOTEXT_SPEAKER_COUNT)
+        return words_list
 
 # input : One video
 # output : video with skeleton
@@ -297,7 +343,9 @@ def merge():
 
         return 'PANIC cannot reach here'
 
-api.add_resource(SpeechToText, "/video_crop/<path:filename>")
+api.add_resource(VideoStutter, "/video_stutter/<path:filename>")
+api.add_resource(VideoSubtitle, "/video_subtitle/<path:filename>")
+api.add_resource(VideoText, "/video_text/<path:filename>")
 api.add_resource(Upload, "/upload")
 api.add_resource(Knowns, "/upload/knowns")
 

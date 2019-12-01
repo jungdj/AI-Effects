@@ -28,6 +28,7 @@ googleapis-common-protos==1.6.0
 grpcio==1.25.0
 h5py==2.10.0
 idna==2.8
+moviepy==1.0.0
 imageio==2.5.0
 imageio-ffmpeg==0.3.0
 imutils==0.5.3
@@ -44,7 +45,6 @@ Markdown==3.1.1
 MarkupSafe==1.1.1
 matplotlib==3.1.2
 mccabe==0.6.1
-moviepy==1.0.0
 msgpack==0.6.2
 msgpack-numpy==0.4.4.3
 networkx==2.4

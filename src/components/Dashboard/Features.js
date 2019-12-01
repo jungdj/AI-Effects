@@ -86,7 +86,7 @@ const Features = () => {
 						<TD>Video Concat</TD>
 						<TD>X</TD>
 						<TD>Pose</TD>
-						<TD><img src={video} /></TD>
+						<TD><img src={video} /><img src={video} /></TD>
 						<TD><img src={download} /></TD>
 					</TR>
 				</Table.Body>

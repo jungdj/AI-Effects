@@ -103,16 +103,17 @@ def get_uploads(filename):
 def get_results(filename):
     return send_from_directory(RESULT_FOLDER,filename, as_attachment=True)
 
-@app.route('/blur/<path:filename>')
-def blur_faces(filename):
-    video_name, ext = os.path.splitext(filename)
-    blur_video_path = os.path.join(RESULT_FOLDER, video_name, video_name + '_blur' + ext)
-    ret_path = "results/" + video_name + "/" + video_name + '_blur' + ext
-    if os.path.exists(blur_video_path):
+class BlurFaces(Resource):
+    def post(self, filename):
+        knowns = [] if request['knowns'] == '' else request['knowns'].split(',')  
+        video_name, ext = os.path.splitext(filename)
+        blur_video_path = os.path.join(RESULT_FOLDER, video_name, video_name + '_blur' + ext)
+        ret_path = "/results/" + video_name + "/" + video_name + '_blur' + ext
+        if os.path.exists(blur_video_path):
+            return ret_path
+        input_path = os.path.join(UPLOAD_FOLDER, filename)
+        blur_utils.blurOtherFaces(input_path, blur_video_path, knowns)
         return ret_path
-    input_path = os.path.join(UPLOAD_FOLDER, filename)
-    blur_utils.blurOtherFaces(input_path, blur_video_path)
-    return ret_path
 
 @app.route('/extract_faces/<path:filename>')
 def extract_faces(filename):
@@ -129,7 +130,7 @@ def extract_faces(filename):
         return 'error'
 
     files = []
-    ret_path = "results/" + only_filename + "/people/"
+    ret_path = "/results/" + only_filename + "/people/"
     for f in (glob.glob(people_dir + "/*.jpg")):
         if os.path.basename(f) != 'ID-1.jpg':
             files.append(ret_path + os.path.basename(f))
@@ -384,6 +385,7 @@ api.add_resource(GetUploadfiles, "/get_upload")
 api.add_resource(GetPeopleimg, "/get_people_img/<path:filename>")
 api.add_resource(Upload, "/upload")
 api.add_resource(Knowns, "/upload/knowns")
+api.add_resource(BlurFaces, "/blur/<path:filename>")
 
 if __name__ == '__main__':
     # ip_address = utils.get_ip_address()

@@ -9,8 +9,8 @@ def blurAllFaces(video_path, output_path):
     net = cv2.dnn.readNetFromCaffe(prototxt, model)
     video_utils.processVideo(video_path, output_path, face_models.faceDetectBlur, net, confidence)
 
-def blurOtherFaces(video_path, output_path):
-    fr = face_models.FaceRecog(video_path, 0.38)
+def blurOtherFaces(video_path, output_path, knowns):
+    fr = face_models.FaceRecog(video_path, 0.38, knowns)
     video_utils.processVideo(video_path, output_path, fr.faceRecogBlur)
 
 # blurAllFaces('media/sample1.mov', 'media/output1.mp4')

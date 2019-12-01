@@ -19,7 +19,7 @@ class VideoCamera(object):
 
 # tolerance: How much distance between faces to consider it a match. Lower is more strict.
 class FaceRecog():
-    def __init__(self, video_path = None, tolerance = 0.4):
+    def __init__(self, video_path = None, tolerance = 0.4, knowns = []):
         self.camera = VideoCamera(video_path)
 
         self.known_face_encodings = []
@@ -27,17 +27,18 @@ class FaceRecog():
 
         # Load pictures of known people and learn how to recognize it.
         videoname, _ = os.path.splitext(os.path.basename(video_path))
-        dirname = os.path.join('results', videoname, 'knowns')
-        files = os.listdir(dirname)
-        for filename in files:
-            name, ext = os.path.splitext(filename)
-            if ext == '.jpg':
-                self.known_face_names.append(name)
-                print(name)
-                pathname = os.path.join(dirname, filename)
-                img = face_recognition.load_image_file(pathname)
-                face_encoding = face_recognition.face_encodings(img)[0]
-                self.known_face_encodings.append(face_encoding)
+        for person_id in knowns:
+            dirname = os.path.join('results', videoname, person_id)
+            files = os.listdir(dirname)
+            for filename in files:
+                name, ext = os.path.splitext(filename)
+                if ext == '.jpg':
+                    self.known_face_names.append(name)
+                    print(name)
+                    pathname = os.path.join(dirname, filename)
+                    img = face_recognition.load_image_file(pathname)
+                    face_encoding = face_recognition.face_encodings(img)[0]
+                    self.known_face_encodings.append(face_encoding)
 
         # Initialize some variables
         self.face_locations = []

@@ -142,7 +142,7 @@ const PWTWrapper = styled.div`
 	}
 `
 
-const PaneWithTabs = ({ tabs, cur, tabAction }) => {
+const PaneWithTabs = ({ tabs, cur, tabAction, uploadCb }) => {
 	return (
 		<PWTWrapper>
 			<div className="tabs">
@@ -164,11 +164,14 @@ const PaneWithTabs = ({ tabs, cur, tabAction }) => {
 				))}
 			</div>
 			<div className="pane">
-				{tabs.map((tab, i) => (
-					<div className={`item ${i == cur ? 'active' : 'inactive'}`} key={tab.name}>
-						{tabs[i].component}
-					</div>
-				))}
+				{tabs.map((tab, i) => {
+					const Component = tabs[i].component;
+					return (
+						<div className={`item ${i == cur ? 'active' : 'inactive'}`} key={tab.name}>
+							<Component {...tabs[i]} cb={uploadCb} />
+						</div>
+					)
+				})}
 			</div>
 		</PWTWrapper>
 	)
@@ -187,6 +190,18 @@ const Dashboard = () => {
 				state.tabs.splice(action.value, 1)
 				state.cur = (state.cur + 1) % state.tabs.length
 				return { ...state };
+			case 'knowns':
+				const cur = state.tabs[state.cur];
+				if (!cur.knowns) {
+					cur.knowns = []
+				}
+				const index = cur.knowns.findIndex(x => x === action.value)
+				console.log('yes knowns', index);
+				if (index == -1) cur.knowns.push(action.value)
+				else cur.knowns.splice (index, 1);
+				console.log('cur', cur)
+				state.tabs[state.cur] = cur;
+				return { ...state, tabs: [...state.tabs] }
 			case 'activate':
 				state.cur = action.value;
 				return { ...state };
@@ -195,8 +210,7 @@ const Dashboard = () => {
 		}
 	}, {
 		tabs: [
-			{ name: 'Upload', type: 'upload', fileName: '', component: <VideoInput cb={uploadCb} /> },
-			//{ name: 'Upload 2 Name is Too Long, Upload 2 Name is Too Long, Upload 2 Name is Too Long, Upload 2 Name is Too Long, ', type: 'upload', component: <h1>sasf</h1> }
+			{ name: 'Upload', type: 'upload', fileName: '', component: VideoInput },
 		],
 		cur: 0
 	})
@@ -215,11 +229,11 @@ const Dashboard = () => {
 					</section>
 				</section>
 				<section className="panel-2">
-					<PaneWithTabs tabs={tabData.tabs} cur={tabData.cur} tabAction={tabAction}/>
+					<PaneWithTabs tabs={tabData.tabs} cur={tabData.cur} tabAction={tabAction} uploadCb={uploadCb} />
 				</section>
 				<section className="panel-3">
 					<section className="panel-3-1">
-						<KnownPeople data={cur} />
+						<KnownPeople data={cur} tabAction={tabAction} />
 					</section>
 					<section className="panel-3-2">
 						<Subtitles/>

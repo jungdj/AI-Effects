@@ -129,7 +129,7 @@ const VideoInput = (props) => {
 		onDrop,
 		onDropRejected,
 		maxSize: sizeLimit,
-		accept: 'video/mp4'
+		accept: 'video/*'
 	})
 
 	return (

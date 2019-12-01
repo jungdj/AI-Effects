@@ -6,6 +6,7 @@ import VideoInput from "./VideoInput"
 import close from '../static/icons/close-24px.svg';
 import Subtitles from "./Dashboard/Subtitles"
 import KnownPeople from "./Dashboard/KnownPeople"
+import Features from "./Dashboard/Features"
 
 const Wrapper = styled.div`
 	width: 100vw;
@@ -41,7 +42,7 @@ const Row1 = styled.section`
 			flex: 2;
 		}
 		.panel-1-2 {
-			flex: 1;
+			flex: 2;
 		}
 	}
 	.panel-2 {
@@ -199,7 +200,7 @@ const Dashboard = () => {
 						<h1>Original Videos</h1>
 					</section>
 					<section className="panel-1-2">
-						<h1>Upload & Generate Videos</h1>
+						<Features/>
 					</section>
 				</section>
 				<section className="panel-2">

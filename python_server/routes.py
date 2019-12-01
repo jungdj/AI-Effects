@@ -6,8 +6,8 @@ import glob
 import json
 import face_models
 import blur_utils
-import pose_models
-import pose_utils
+# import pose_models
+# import pose_utils
 import face_clustering
 import time
 from werkzeug.utils import secure_filename
@@ -112,8 +112,8 @@ def blur_faces(filename):
 @app.route('/extract_faces/<path:filename>')
 def extract_faces(filename):
     filepath = os.path.join(UPLOAD_FOLDER, filename)
-    epf = face_clustering.ExtractPeopleFaces(filename)
-    epf.encode(10)
+    epf = face_clustering.ExtractPeopleFaces(filepath)
+    epf.encode(2)
     epf.cluster()
     return 'extract done'
 

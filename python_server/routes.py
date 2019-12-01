@@ -122,9 +122,15 @@ class Upload(Resource):
 
         if file:
             filename = secure_filename(file.filename)
+            name, ext = os.path.splitext(filename)
             filepath = os.path.join(UPLOAD_FOLDER, filename)
             file.save(filepath)
-            return filename
+            filedir = os.path.join(basedir, name)
+            if not os.path.isdir(filedir):
+                os.mkdir(filedir)
+                os.mkdir(filedir + '/people')
+                os.mkdir(filedir +'/knowns')
+
         return redirect(request.url)
 
     def get(self):
@@ -132,6 +138,7 @@ class Upload(Resource):
 
 class Knowns(Resource):
     def post(self):
+        videoname = request.form['videoname']
         if 'file' not in request.files:
             flash('No file part')
             return redirect(request.url)
@@ -241,105 +248,72 @@ class VideoText(Resource):
 
 # input : One video
 # output : video with skeleton
-# form format {'file' : video want to get skeleton}
+# form format {'filename' : video name want to get skeleton}
 @app.route('/add_pose_skeleton', methods = ['POST'])
 def add_pose_skeleton():
-    if 'file' not in request.files:
-        flash('No file part')
-        return redirect(request.url)
-
-    file = request.files['file']
-    if file.filename == '':
+    filename = request.form['filename']
+    if filename == '':
         flash('No selected file')
         return redirect(request.url)
 
-    if file:
+    if filename:
         ts=time.time()
         ts=str(int(ts))
-        temp_dir = os.path.join(UPLOAD_POSE_FOLDER, ts)
-        if os.path.isdir(temp_dir):
-            flash("There are too many requests. Please run it again in a moment.")
-            return "Multiple request at same time error"
-        os.mkdir(temp_dir)
 
-        filename = secure_filename(file.filename)
-        filepath = os.path.join(temp_dir, filename)
-        file.save(filepath)
+        filepath = os.path.join(UPLOAD_FOLDER, filename)
 
         # get only filename without extension
         file_without_ext = os.path.splitext(filename)[0]
         ext = os.path.splitext(filename)[1]
         output_name = file_without_ext + "_with_pose" + ext
-        output_path = os.path.join(temp_dir, output_name)
+        file_dir = os.path.join(UPLOAD_FOLDER, file_without_ext)
+        output_path = os.path.join(file_dir, output_name)
 
         pose_utils.detectAllPoses(filepath, output_path)
 
-        @after_this_request
-        def delete_temp_files(response):
-            os.remove(filepath)
-            os.remove(output_path)
-            os.rmdir(temp_dir)
-            return response
-
-        return send_from_directory(directory=temp_dir, filename=output_name)
+        return "success"
 
     return 'PANIC cannot reach here'
 
+
 # input : two video, optional one text
 # output : Merged One video (skeleton or not)
-# form format {'first' : first video to merge(type file)
-#              'second' : second video to merge(type file)
+# form format {'first_filename' : first video name to merge(text file)
+#              'second_filename' : second video name to merge(text file)
 #              (Optional)'with_skeleton' : if merge video need skeleton true of True. default False}
+@app.route('/merge', methods = ['POST'])
 def merge():
     if request.method == 'POST':
-        if 'first' not in request.files or 'second' not in request.files:
+        if 'first_filename' not in request.form or 'second_filename' not in request.form:
             flash('No file part')
             return redirect(request.url)
 
-        file1 = request.files['first']
-        file2 = request.files['second']
-
-        if file1.filename == '' or file2.filename =='':
-            flash('No selected file')
-            return redirect(request.url)
+        filename1 = request.form['first_filename']
+        filename2 = request.form['second_filename']
 
         with_skeleton = False
         if request.form['with_skeleton'] == "true" or request.form['with_skeleton'] == "True":
             with_skeleton = True
-        if file1 and file2:
+        if filename1 and filename2:
             ts=time.time()
             ts=str(int(ts))
-            temp_dir = os.path.join(UPLOAD_POSE_FOLDER, ts)
-            if os.path.isdir(temp_dir):
-                flash("There are too many requests. Please run it again in a moment.")
-                return "Multiple request at same time error"
-            os.mkdir(temp_dir)
 
-            filename1 = secure_filename(file1.filename)
-            filepath1 = os.path.join(temp_dir, filename1)
-            file1.save(filepath1)
-
-            filename2 = secure_filename(file2.filename)
-            filepath2 = os.path.join(temp_dir, filename2)
-            file2.save(filepath2)
+            filepath1 = os.path.join(UPLOAD_FOLDER, filename1)
+            filepath2 = os.path.join(UPLOAD_FOLDER, filename2)
 
             # get only filename without extension
-            file_without_ext = os.path.splitext(filename1)[0]
+            file1_without_ext = os.path.splitext(filename1)[0]
+            file2_without_ext = os.path.splitext(filename2)[0]
             ext = os.path.splitext(filename1)[1]
-            output_name = file_without_ext + "_with_pose" + ext
-            output_path = os.path.join(temp_dir, output_name)
+            output_name = file1_without_ext + "_" + file2_without_ext + "_merge" + ext
+            file1_dir = os.path.join(UPLOAD_FOLDER, file1_without_ext)
+            output_path = os.path.join(file1_dir, output_name)
 
             pose_utils.TwoVideoProcess(filepath1, filepath2, output_path, with_skeleton)
 
-            @after_this_request
-            def delete_temp_files(response):
-                os.remove(filepath1)
-                os.remove(filepath2)
-                os.remove(output_path)
-                os.rmdir(temp_dir)
-                return response
+            # return send_from_directory(directory=temp_dir, filename=output_name)
 
-            return send_from_directory(directory=temp_dir, filename=output_name)
+            return "success"
 
         return 'PANIC cannot reach here'
 

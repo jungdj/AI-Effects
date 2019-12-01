@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.25",
+    "@fortawesome/free-solid-svg-icons": "^5.11.2",
+    "@fortawesome/react-fontawesome": "^0.1.7",
     "@google-cloud/speech": "^3.3.2",
     "@material-ui/core": "^4.5.2",
     "animate.css": "^3.7.2",
@@ -16,6 +19,7 @@
     "react-grid-layout": "^0.17.1",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.2.0",
+    "react-spinners": "^0.6.1",
     "react-toastify": "^5.4.1",
     "reactstrap": "^8.1.1",
     "styled-components": "^4.4.1",

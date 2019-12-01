@@ -4,6 +4,9 @@ import styled from 'styled-components';
 import VideoInput from "./VideoInput"
 
 import close from '../static/icons/close-24px.svg';
+import Subtitles from "./Dashboard/Subtitles"
+import KnownPeople from "./Dashboard/KnownPeople"
+import Features from "./Dashboard/Features"
 
 const Wrapper = styled.div`
 	width: 100vw;
@@ -12,20 +15,26 @@ const Wrapper = styled.div`
 	flex-direction: column;
 	background-color: rgb(35, 35, 35);
 	* {
-		display: flex;
 		color: white;
 	}
 	section {
-		border: 0.1px solid lightslategrey;
+		display: flex;
 	}
 `
 
 const Row1 = styled.section`
 	width: 100%;
-	flex: 7;
+	height: 70vh;
 	section {
 		padding: 1px;
 	}
+	> section {
+		border: 2px solid rgb(22,22,22);
+	}
+	.panel-1-1, .panel-3-1 {
+		border-bottom: 4px solid rgb(22,22,22);
+	}
+	
 	.panel-1 {
 		flex: 1;
 		flex-direction: column;
@@ -33,7 +42,7 @@ const Row1 = styled.section`
 			flex: 2;
 		}
 		.panel-1-2 {
-			flex: 1;
+			flex: 2;
 		}
 	}
 	.panel-2 {
@@ -44,10 +53,11 @@ const Row1 = styled.section`
 		flex: 1;
 		flex-direction: column;
 		.panel-3-1 {
-			flex: 1;
+			height: 50%;
 		}
 		.panel-3-2 {
-			flex: 1;
+			height: 50%;
+			overflow: hidden;
 		}
 	}
 `
@@ -55,7 +65,10 @@ const Row1 = styled.section`
 const Row2 = styled.section`
 	display: flex;
 	width: 100%;
-	flex: 3;
+	height: 30vh;
+	> section {
+		border: 2px solid rgb(22,22,22);
+	}
 	.panel-1 {
 		flex: 2;
 	}
@@ -187,7 +200,7 @@ const Dashboard = () => {
 						<h1>Original Videos</h1>
 					</section>
 					<section className="panel-1-2">
-						<h1>Upload & Generate Videos</h1>
+						<Features/>
 					</section>
 				</section>
 				<section className="panel-2">
@@ -195,10 +208,10 @@ const Dashboard = () => {
 				</section>
 				<section className="panel-3">
 					<section className="panel-3-1">
-						<h1>Known People</h1>
+						<KnownPeople/>
 					</section>
 					<section className="panel-3-2">
-						<h1>Subtitles</h1>
+						<Subtitles/>
 					</section>
 				</section>
 			</Row1>

@@ -1,14 +1,18 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
+import axios from 'axios';
 import styled, { css } from 'styled-components'
 import {useDropzone} from 'react-dropzone'
 import { Player } from 'video-react';
 
 import addToQueue from '../static/icons/add_to_queue-24px.svg'
+import uploadImg from '../static/icons/cloud_upload-24px.svg'
+import { uploadVideo } from "../utils/api"
 
 const Wrapper = styled.div`
 	width: ${props => props.width || `100%`};
 	height: ${props => props.height || `100%`};
 	display: flex;
+	flex-direction: column;
 	justify-content: center;
 	align-items: center;
 	${props => props.url ? `` : css`
@@ -16,6 +20,26 @@ const Wrapper = styled.div`
 		width: 60%;
 		height: 60%;
 	`}; 
+	
+	.upload {
+		display: flex;
+		flex-direction: column;
+		color: #8f8f8f;
+		font-size: 24px;
+		font-weight: bold;
+		margin-bottom: 12%;
+		img {
+			width: 80px;
+		}
+		
+		&:hover {
+			cursor: pointer;
+			img {
+				border: 2px solid rgba(43, 43, 43, 0);
+			}
+			font-size: 22px;
+		}
+	}
 `
 const DescWrapper = styled.div`
 	display: flex;
@@ -77,6 +101,17 @@ const Preview = ({ previewUrl }) => {
 const sizeLimit = 50000000
 const VideoInput = (props) => {
 	const [url, setUrl] = useState ('');
+	const [files, setFiles] = useState([]);
+
+	const upload = useCallback ((e) => {
+		e.stopPropagation ()
+		const formData = new FormData ();
+		formData.append ('file', files[files.length - 1])
+		//axios.post('http://localhost:5000/upload', formData)
+		uploadVideo (formData)
+			.then(() => alert("success"))
+			.catch(error => console.error(error))
+	}, [url])
 
 	const onDrop = useCallback((acceptedFiles) => {
 		acceptedFiles.forEach((file) => {
@@ -92,6 +127,7 @@ const VideoInput = (props) => {
 			}
 			reader.readAsDataURL(file)
 		})
+		setFiles ([...files, ...acceptedFiles])
 	}, [])
 	const onDropRejected = useCallback (rejected => {
 		const file = rejected[0]
@@ -113,7 +149,13 @@ const VideoInput = (props) => {
 			<input {...getInputProps()} />
 			{
 				url ?
-					<Preview previewUrl={url} />
+					<>
+						<Preview previewUrl={url} />
+						<div className="upload" onClick={upload}>
+							<img src={uploadImg} />
+							Upload
+						</div>
+					</>
 					:
 					<Description />
 			}

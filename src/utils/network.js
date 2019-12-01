@@ -14,11 +14,11 @@ class Axios {
 			headers: {
 			},
 			timeout: 30000,
-			baseURL: `${HOST}/api`,
+			baseURL: `${HOST}/`,
 		})
 	}
 	static get instance () {
-		if (this[singleton]) {
+		if (!this[singleton]) {
 			this[singleton] = new Axios(singletonEnforcer)
 		}
 		return this[singleton]

@@ -97,15 +97,19 @@ def download_file(filename):
 
 @app.route('/blur/<path:filename>')
 def blur_faces(filename):
-    filepath = os.path.join(UPLOAD_FOLDER, filename)
-    blur_utils.blurOtherFaces(filepath, os.path.join(UPLOAD_FOLDER, 'blur_' + filename))
-    return send_from_directory(UPLOAD_FOLDER,'blur_'+filename, as_attachment=True)
+    video_name, ext = os.path.splitext(filename)
+    blur_video_path = os.path.join(basedir, video_name, video_name + '_blur' + ext)
+    if os.path.exists(blur_video_path):
+        return blur_video_path
+    input_path = os.path.join(UPLOAD_FOLDER, filename)
+    blur_utils.blurOtherFaces(input_path, blur_video_path)
+    return blur_video_path
 
 @app.route('/extract_faces/<path:filename>')
 def extract_faces(filename):
-    epf = ExtractPeopleFaces()
     filepath = os.path.join(UPLOAD_FOLDER, filename)
-    epf.encode(filepath, 1)
+    epf = face_clustering.ExtractPeopleFaces(filename)
+    epf.encode(10)
     epf.cluster()
     return 'extract done'
 

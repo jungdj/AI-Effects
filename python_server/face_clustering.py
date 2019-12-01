@@ -14,11 +14,14 @@ class Face():
         self.encoding = encoding
 
 class ExtractPeopleFaces():
-    def __init__(self):
+    def __init__(self, src_file):
         self.faces = []
         self.run_encoding = False
-        self.capture_dir = "captures"
-        self.people_dir = "people"
+        self.src_file = src_file
+        
+        name, ext = os.path.splitext(src_file)
+        self.capture_dir = os.path.join(name, "captures")
+        self.people_dir = os.path.join(name, "people")
 
     def capture_filename(self, frame_id):
         return "frame_%08d.jpg" % frame_id
@@ -38,8 +41,8 @@ class ExtractPeopleFaces():
         right = min(right + box_width, img_width - 1)
         return image[top:bottom, left:right]
 
-    def encode(self, src_file, capture_per_second, stop=0):
-        src = cv2.VideoCapture(src_file)
+    def encode(self, capture_per_second, stop=0):
+        src = cv2.VideoCapture(self.src_file)
         if not src.isOpened():
             return
 
@@ -165,6 +168,6 @@ class ExtractPeopleFaces():
         print('clustering done')
         
 
-# epf = ExtractPeopleFaces()
-# epf.encode("uploads/sample.mov", 1)
+# epf = ExtractPeopleFaces("uploads/sample.mov")
+# epf.encode(1)
 # epf.cluster()

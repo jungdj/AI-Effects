@@ -26,7 +26,8 @@ class FaceRecog():
         self.known_face_names = []
 
         # Load pictures of known people and learn how to recognize it.
-        dirname = 'uploads/knowns'
+        videoname, _ = os.path.splitext(os.path.basename(video_path))
+        dirname = os.path.join(videoname, 'knowns')
         files = os.listdir(dirname)
         for filename in files:
             name, ext = os.path.splitext(filename)
@@ -67,12 +68,12 @@ class FaceRecog():
                 # See if the face is a match for the known face(s)
                 distances = face_recognition.face_distance(self.known_face_encodings, face_encoding)
                 name = "Unknown"
-                # if distances != None:
-                min_value = min(distances)
+                if distances != None:
+                    min_value = min(distances)
 
-                if min_value < self.tolerance:
-                    index = np.argmin(distances)
-                    name = self.known_face_names[index]
+                    if min_value < self.tolerance:
+                        index = np.argmin(distances)
+                        name = self.known_face_names[index]
 
                 self.face_names.append(name)
 

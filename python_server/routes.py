@@ -327,7 +327,7 @@ def add_pose_skeleton():
         file_without_ext = os.path.splitext(filename)[0]
         ext = os.path.splitext(filename)[1]
         output_name = file_without_ext + "_with_pose" + ext
-        file_dir = os.path.join(UPLOAD_FOLDER, file_without_ext)
+        file_dir = os.path.join(RESULT_FOLDER, file_without_ext)
         output_path = os.path.join(file_dir, output_name)
 
         pose_utils.detectAllPoses(filepath, output_path)
@@ -367,7 +367,7 @@ def merge():
             file2_without_ext = os.path.splitext(filename2)[0]
             ext = os.path.splitext(filename1)[1]
             output_name = file1_without_ext + "_" + file2_without_ext + "_merge" + ext
-            file1_dir = os.path.join(UPLOAD_FOLDER, file1_without_ext)
+            file1_dir = os.path.join(RESULT_FOLDER, file1_without_ext)
             output_path = os.path.join(file1_dir, output_name)
 
             pose_utils.TwoVideoProcess(filepath1, filepath2, output_path, with_skeleton)

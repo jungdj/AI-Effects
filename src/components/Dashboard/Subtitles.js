@@ -6,10 +6,10 @@ import usePromise from "../../hooks/usePromise"
 import Spinner from "../Spinner"
 
 import { getSubtitles } from "../../utils/api"
+import { SectionWithTitle } from "../../utils/mixins"
 
 const Wrapper = styled.div`
-	width: 100%;
-	height: 100%;
+	${SectionWithTitle};
 `
 
 const Table = styled.table`
@@ -31,14 +31,15 @@ Table.Head = styled.thead`
 	td { 
 		border-right: 1px solid rgb(9,9,9);
 		padding: 0 4px;
+		color: rgb(138,138,138);
 	}
 `
 
 Table.Body = styled.tbody`
 	position: relative;
-	display: flex;
-	flex-direction: column;
+	display: block;
 	width: 100%;
+	height: calc(100% - 24px);
 	overflow: scroll;
 	margin-top: 24px;
 	background-color: rgb(34,34,34);
@@ -108,7 +109,7 @@ const Subtitles = () => {
 
 	return (
 		<Wrapper>
-			<Table>
+			<Table className={'__section-body'}>
 				<Table.Head>
 					<TR>
 						<TD>Timestamp</TD>

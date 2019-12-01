@@ -1,6 +1,9 @@
 import axios from './network'
 
-import { subtitle_mock } from "./mocks"
+import {
+	knowns_mock,
+	subtitle_mock
+} from "./mocks"
 
-//export const getSubtitles = formData => axios.post('/xxxx', formData)
+export const getPeople = formData => Promise.resolve (knowns_mock);
 export const getSubtitles = formData => Promise.resolve(subtitle_mock);

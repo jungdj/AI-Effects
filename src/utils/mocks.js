@@ -1,3 +1,10 @@
+import dj from '../static/dj.jpg'
+import gogi from '../static/gogi.jpg';
+import seol from '../static/seol.jpg';
+import youns from '../static/youns.jpeg';
+
+export const knowns_mock = [dj, gogi, seol, youns]
+
 const stt_result_mock = `
 Word: by, start_time: 0.1, end_time: 0.5, speaker_tag: 2
 Word: the, start_time: 0.5, end_time: 0.6000000000000001, speaker_tag: 2

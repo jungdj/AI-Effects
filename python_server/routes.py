@@ -262,7 +262,13 @@ class VideoStutter(Resource):
 
         addSubtitles(final_video_path, subtitle_video_path, new_words_list)
 
-        return merge_video_path
+        for f in (glob.glob(people_dir + "/*.jpg")):
+        if os.path.basename(f) != 'ID-1.jpg':
+            files.append("/results/" + only_filename + "/people/" + os.path.basename(f))
+        
+        merge_video_path_name = os.path.join("/results", merge_video_name)
+
+        return merge_video_path_name
 
 class VideoSubtitle(Resource):
     def get(self, filename):
@@ -288,7 +294,9 @@ class VideoSubtitle(Resource):
         words_list = speech_to_text(audio_path, SPEECHTOTEXT_SPEAKER_COUNT)
         addSubtitles(video_path, subtitle_video_path, words_list)
 
-        return subtitle_video_path
+        subtitle_video_path_name = os.path.join("/results", subtitle_video_name)
+
+        return subtitle_video_path_name
 
 class VideoText(Resource):
     def get(self, filename):

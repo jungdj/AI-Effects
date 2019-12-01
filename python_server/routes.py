@@ -262,7 +262,7 @@ class VideoStutter(Resource):
 
         addSubtitles(final_video_path, subtitle_video_path, new_words_list)
         
-        merge_video_path_name = os.path.join("/results", merge_video_name)
+        merge_video_path_name = os.path.join("/results", only_filename, merge_video_name)
 
         return merge_video_path_name
 
@@ -290,7 +290,7 @@ class VideoSubtitle(Resource):
         words_list = speech_to_text(audio_path, SPEECHTOTEXT_SPEAKER_COUNT)
         addSubtitles(video_path, subtitle_video_path, words_list)
 
-        subtitle_video_path_name = os.path.join("/results", subtitle_video_name)
+        subtitle_video_path_name = os.path.join("/results", only_filename, subtitle_video_name)
 
         return subtitle_video_path_name
 

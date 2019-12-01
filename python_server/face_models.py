@@ -68,7 +68,7 @@ class FaceRecog():
                 # See if the face is a match for the known face(s)
                 distances = face_recognition.face_distance(self.known_face_encodings, face_encoding)
                 name = "Unknown"
-                if distances != None:
+                if self.known_face_encodings:
                     min_value = min(distances)
 
                     if min_value < self.tolerance:

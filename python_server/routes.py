@@ -2,6 +2,7 @@
 # -*- coding:utf-8 -*-
 import os
 import sys
+import glob
 import json
 import face_models
 import blur_utils
@@ -32,6 +33,7 @@ from config import (
     HTTP,
     ADDR,
     UPLOAD_FOLDER,
+    RESULT_FOLDER,
     SPEECHTOTEXT_SPEAKER_COUNT,
 )
 from moviepy.editor import VideoFileClip
@@ -51,6 +53,8 @@ from video_utils import (
 
 if not os.path.isdir(UPLOAD_FOLDER):
     os.mkdir(UPLOAD_FOLDER)
+if not os.path.isdir(RESULT_FOLDER):
+    os.mkdir(RESULT_FOLDER)
 
 app = Flask(__name__)
 CORS(app)
@@ -98,7 +102,7 @@ def download_file(filename):
 @app.route('/blur/<path:filename>')
 def blur_faces(filename):
     video_name, ext = os.path.splitext(filename)
-    blur_video_path = os.path.join(basedir, video_name, video_name + '_blur' + ext)
+    blur_video_path = os.path.join(RESULT_FOLDER, video_name, video_name + '_blur' + ext)
     if os.path.exists(blur_video_path):
         return blur_video_path
     input_path = os.path.join(UPLOAD_FOLDER, filename)
@@ -112,6 +116,14 @@ def extract_faces(filename):
     epf.encode(10)
     epf.cluster()
     return 'extract done'
+
+
+class GetUploadfiles(Resource):
+    def get(self):
+        files = [f for f in (glob.glob(UPLOAD_FOLDER + "/*.mp4")) or (glob.glob(UPLOAD_FOLDER + "/*.mov"))]
+
+        return files
+
 
 class Upload(Resource):
     def post(self):
@@ -129,7 +141,7 @@ class Upload(Resource):
             name, ext = os.path.splitext(filename)
             filepath = os.path.join(UPLOAD_FOLDER, filename)
             file.save(filepath)
-            filedir = os.path.join(basedir, name)
+            filedir = os.path.join(RESULT_FOLDER, name)
             if not os.path.isdir(filedir):
                 os.mkdir(filedir)
                 os.mkdir(filedir + '/people')
@@ -151,7 +163,11 @@ class Knowns(Resource):
             if f.filename == '':
                 flash('No selected file')
                 return redirect(request.url)
-            f.save(os.path.join(UPLOAD_FOLDER, 'knowns', f.filename))
+            
+            knowns_dir = os.path.join(RESULT_FOLDER, videoname, 'knowns')
+            os.system("rm -rf " + knowns_dir)
+            os.mkdir(knowns_dir)
+            f.save(os.path.join(knowns_dir, f.filename))
         
         return 'upload complete'
     def get(self):
@@ -168,13 +184,14 @@ class VideoStutter(Resource):
         # to prevent running speechToText 2 times for merge(crop for stuttering) + subtitle -> make two videos in one time!
         only_filename = os.path.splitext(filename)[0]
 
-        file_path = os.path.join(UPLOAD_FOLDER, only_filename)
+        file_path = os.path.join(RESULT_FOLDER, only_filename)
 
         audio_name = only_filename + '_audio.wav'
         merge_video_name = only_filename + '_merge_stutter.mp4'
         subtitle_video_name = only_filename + '_subtitle.mp4'
 
-        video_path = os.path.join(file_path, filename)
+        video_path = os.path.join(UPLOAD_FOLDER, filename)
+
         audio_path = os.path.join(file_path, audio_name)
         merge_video_path = os.path.join(file_path, merge_video_name)
         subtitle_video_path = os.path.join(file_path, subtitle_video_name)
@@ -193,16 +210,14 @@ class VideoStutter(Resource):
         new_words_list = None
 
         if (len(cutting_list) == 0):
-            final_video_path = video_path
             print("Nothing to cut!")
             new_words_list = words_list
         else:
-            final_video_path = merge_video_path
             mergeVideos(video_path, merge_video_path, cutting_list)
             # need mergeVideo's each text word (start, end) time
             new_words_list = newWordList(words_list, cutting_list)
 
-        addSubtitles(final_video_path, subtitle_video_path, new_words_list)
+        addSubtitles(merge_video_path, subtitle_video_path, new_words_list)
 
         return merge_video_path
 
@@ -210,12 +225,12 @@ class VideoSubtitle(Resource):
     def get(self, filename):
         only_filename = os.path.splitext(filename)[0]
 
-        file_path = os.path.join(UPLOAD_FOLDER, only_filename)
+        file_path = os.path.join(RESULT_FOLDER, only_filename)
         
         audio_name = only_filename + '_audio.wav'
         subtitle_video_name = only_filename + '_subtitle.mp4'
 
-        video_path = os.path.join(file_path, filename)
+        video_path = os.path.join(UPLOAD_FOLDER, filename)
         audio_path = os.path.join(file_path, audio_name)
         subtitle_video_path = os.path.join(file_path, subtitle_video_name)
 
@@ -237,11 +252,11 @@ class VideoText(Resource):
         # return word_text to frontend
         only_filename = os.path.splitext(filename)[0]
 
-        file_path = os.path.join(UPLOAD_FOLDER, only_filename)
+        file_path = os.path.join(RESULT_FOLDER, only_filename)
         
         audio_name = only_filename + '_audio.wav'
 
-        video_path = os.path.join(file_path, filename)
+        video_path = os.path.join(UPLOAD_FOLDER, filename)
         audio_path = os.path.join(file_path, audio_name)
 
         if not os.path.isfile(audio_path):
@@ -324,6 +339,7 @@ def merge():
 api.add_resource(VideoStutter, "/video_stutter/<path:filename>")
 api.add_resource(VideoSubtitle, "/video_subtitle/<path:filename>")
 api.add_resource(VideoText, "/video_text/<path:filename>")
+api.add_resource(GetUploadfiles, "/get_upload")
 api.add_resource(Upload, "/upload")
 api.add_resource(Knowns, "/upload/knowns")
 

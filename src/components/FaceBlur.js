@@ -62,6 +62,7 @@ const FaceBlur = () => {
 	const uploadImages = useCallback(async () => {
 		const data = new FormData();
 		console.log(imagefile)
+		data.append('videoname', 'sample1')
 		for (var x = 0; x < imagefile.length; x++) {
 			data.append('file', imagefile[x])
 		}

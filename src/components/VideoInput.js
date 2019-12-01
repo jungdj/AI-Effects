@@ -2,11 +2,11 @@ import React, { useState, useCallback, useEffect } from 'react';
 import axios from 'axios';
 import styled, { css } from 'styled-components'
 import {useDropzone} from 'react-dropzone'
-import { Player } from 'video-react';
 
 import addToQueue from '../static/icons/add_to_queue-24px.svg'
 import uploadImg from '../static/icons/cloud_upload-24px.svg'
 import { uploadVideo } from "../utils/api"
+import Preview from "./Dashboard/Preview"
 
 const Wrapper = styled.div`
 	width: ${props => props.width || `100%`};
@@ -81,23 +81,6 @@ const Description = () => {
 	)
 }
 
-const PrevWrapper = styled.div`
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-	width: 100%;
-	height: 100%;
-`
-
-const Preview = ({ previewUrl }) => {
-	return (
-		<PrevWrapper onClick={e => e.stopPropagation()}>
-			<Player playsInline src={previewUrl} />
-		</PrevWrapper>
-	)
-}
-
 const sizeLimit = 50000000
 const VideoInput = (props) => {
 	const [url, setUrl] = useState ('');
@@ -109,7 +92,12 @@ const VideoInput = (props) => {
 		formData.append ('file', files[files.length - 1])
 		//axios.post('http://localhost:5000/upload', formData)
 		uploadVideo (formData)
-			.then(() => alert("success"))
+			.then(() => {
+				props.cb();
+				setUrl ('');
+				setFiles([]);
+				alert("success")
+			})
 			.catch(error => console.error(error))
 	}, [url])
 

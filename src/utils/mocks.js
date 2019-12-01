@@ -103,4 +103,4 @@ export const subtitle_mock = stt_mock.reduce((acc, cur, i) => {
 	return [...acc.slice(0, acc.length -1), last]
 }, [])
 
-export const uploaded_mock = ['face.mp4', 'test2.mp4', 'youknow.mp4']
+export const uploaded_mock = ['sample.mp4', 'test_video.mp4', 'youknow.mp4']

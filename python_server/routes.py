@@ -128,8 +128,7 @@ def extract_faces(filename):
         epf.cluster()
 
     if not os.path.isdir(people_dir):
-        flash('No such directory exists')
-        return 'error'
+        return jsonify([])
 
     files = []
     for f in (glob.glob(people_dir + "/*.jpg")):

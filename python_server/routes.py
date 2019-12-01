@@ -354,7 +354,8 @@ def merge():
         filename2 = request.form['second_filename']
 
         with_skeleton = False
-        if request.form['with_skeleton'] == "true" or request.form['with_skeleton'] == "True":
+
+        if 'with_skeleton' not in request.form or request.form['with_skeleton'] == "true" or request.form['with_skeleton'] == "True":
             with_skeleton = True
         if filename1 and filename2:
             ts=time.time()

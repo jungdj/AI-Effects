@@ -4,7 +4,8 @@ import {
 	Switch,
 	Route,
 	Link,
-	useLocation
+	useLocation,
+	Redirect
 } from "react-router-dom";
 import "animate.css"
 import "video-react/dist/video-react.css"; // import css
@@ -79,14 +80,14 @@ function App() {
 			<ProfileCheck />
 
 			<Switch>
-				<Route path="/pose">
-					<Pose />
-				</Route>
-				<Route path="/voice">
-					<TongueSlip />
-				</Route>
+				{/*<Route path="/pose">*/}
+				{/*	<Pose />*/}
+				{/*</Route>*/}
+				{/*<Route path="/voice">*/}
+				{/*	<TongueSlip />*/}
+				{/*</Route>*/}
 				<Route path="/main">
-					<TongueSlip />
+					<Redirect to={'/dashboard'}/>
 				</Route>
 				<Route path="/dashboard">
 					<Dashboard />

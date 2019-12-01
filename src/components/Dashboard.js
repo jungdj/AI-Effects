@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import VideoInput from "./VideoInput"
 
 import close from '../static/icons/close-24px.svg';
+import Subtitles from "./Dashboard/Subtitles"
 
 const Wrapper = styled.div`
 	width: 100vw;
@@ -22,7 +23,7 @@ const Wrapper = styled.div`
 
 const Row1 = styled.section`
 	width: 100%;
-	flex: 7;
+	height: 70vh;
 	section {
 		padding: 1px;
 	}
@@ -44,10 +45,11 @@ const Row1 = styled.section`
 		flex: 1;
 		flex-direction: column;
 		.panel-3-1 {
-			flex: 1;
+			height: 50%;
 		}
 		.panel-3-2 {
-			flex: 1;
+			height: 50%;
+			overflow: scroll;
 		}
 	}
 `
@@ -55,7 +57,7 @@ const Row1 = styled.section`
 const Row2 = styled.section`
 	display: flex;
 	width: 100%;
-	flex: 3;
+	height: 30vh;
 	.panel-1 {
 		flex: 2;
 	}
@@ -198,7 +200,7 @@ const Dashboard = () => {
 						<h1>Known People</h1>
 					</section>
 					<section className="panel-3-2">
-						<h1>Subtitles</h1>
+						<Subtitles/>
 					</section>
 				</section>
 			</Row1>

@@ -253,7 +253,7 @@ const Dashboard = () => {
 						<KnownPeople data={cur} tabAction={tabAction} />
 					</section>
 					<section className="panel-3-2">
-						<Subtitles/>
+						<Subtitles data={cur} tabAction={tabAction} />
 					</section>
 				</section>
 			</Row1>

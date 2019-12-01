@@ -7,7 +7,7 @@ import {
 
 //export const getPeople = formData => Promise.resolve (knowns_mock);
 export const getPeople = fileName => axios.get(`/extract_faces/${fileName}`)
-export const getSubtitles = formData => Promise.resolve (subtitle_mock);
+export const getSubtitles = fileName => axios.get(`/video_text/${fileName}`)
 export const getUploaded = () => axios.get('/get_upload').then(res => res.data.map(x => {
 	const tmp = x.split('/');
 	return tmp[tmp.length - 1]

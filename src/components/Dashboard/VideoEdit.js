@@ -8,6 +8,9 @@ import { blurVideo, getPeople, mergeVideo } from "../../utils/api"
 
 import split from '../../static/icons/columns-solid.svg';
 import mergeIcon from '../../static/icons/call_merge-24px.svg'
+import tongueSlipFix from '../../static/icons/wrench-solid.svg'
+import caption from '../../static/icons/closed-captioning-regular.svg'
+
 import Spinner from "../Spinner"
 
 const Wrapper = styled.div`
@@ -127,6 +130,8 @@ const VideoEdit = (props) => {
 			<Preview previewUrl={getSrcUrl(src)} />
 			<Menus>
 				<Blur fileName={fileName} setResolved={setBlurSrc} blurSrc={blurSrc} toggle={toggle} knowns={props.knowns}/>
+				<img className={`menu-item`} src={tongueSlipFix} />
+				<img className={`menu-item`} src={caption} />
 				{props.merged || <AddVideo {...props} />}
 				{(props.merged || mergeSrc) && <MergeVideo {...props} toggle={toggleMerge} mergeSrc={mergeSrc} setResolved={setMergeSrc} />}
 			</Menus>

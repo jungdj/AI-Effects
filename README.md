@@ -10,7 +10,11 @@ You can find our Google presentation in this [link](https://docs.google.com/pres
 
 ![upload.gif](docs/upload.gif)
 
+![blur](docs/blur.jpg)
+
 ![subtitle](docs/subtitle.jpg)
+
+![stutter](docs/stutter.jpg)
 
 ![concatenate](docs/concatenate.jpg)
 

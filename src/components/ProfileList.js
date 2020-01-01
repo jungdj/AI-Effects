@@ -170,7 +170,7 @@ const ProfileList = ({ selectProfile, loading}) => {
 				</ul>
 			</div>
 			<div className="profile-button preferred-action">
-				<a target="_blank" href="https://github.com/jungdj/ml-video-trim-tool-ui">Wanna Be a Member?</a>
+				<a target="_blank" href="https://github.com/jungdj/AI-Effects">Wanna Be a Member?</a>
 			</div>
 		</Wrapper>
 	)

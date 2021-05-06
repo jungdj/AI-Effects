@@ -16,7 +16,7 @@ face-recognition==1.2.3
 face-recognition-models==0.3.0
 fire==0.2.1
 Flask==1.1.1
-Flask-Cors==3.0.8
+Flask-Cors==3.0.9
 Flask-RESTful==0.3.7
 gast==0.2.2
 google-api-core==1.14.3

@@ -77,7 +77,7 @@ sklearn==0.0
 slidingwindow==0.0.13
 tabulate==0.8.6
 tensorboard==1.14.0
-tensorflow==1.14.0
+tensorflow==2.5.0
 tensorflow-estimator==1.14.0
 tensorpack==0.9.8
 termcolor==1.1.0

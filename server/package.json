@@ -24,7 +24,7 @@
     "@babel/register": "^7.4.0",
     "@ffmpeg-installer/ffmpeg": "^1.0.20",
     "@ffprobe-installer/ffprobe": "^1.0.12",
-    "aws-sdk": "^2.485.0",
+    "aws-sdk": "^2.814.0",
     "axios": ">=0.18.1",
     "body-parser": "^1.19.0",
     "chalk": "^2.4.2",

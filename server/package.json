@@ -34,7 +34,7 @@
     "dotenv": "^7.0.0",
     "dotenv-expand": "^5.1.0",
     "dotenv-safe": "^6.1.0",
-    "express": "~4.16.0",
+    "express": "~4.17.3",
     "express-formidable": "^1.2.0",
     "express-graphql": "^0.8.0",
     "express-session": "^1.16.1",
